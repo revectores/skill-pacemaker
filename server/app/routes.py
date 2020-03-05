@@ -2,7 +2,7 @@ from app import app,db
 from werkzeug.urls import url_parse
 from flask import render_template,redirect,flash,url_for,request
 from flask_login import login_required,current_user,login_user
-from app.forms import LoginForm
+from app.forms import LoginForm,RegistrationForm
 from app.models import User
 
 @app.route('/')
@@ -26,6 +26,20 @@ def login():
             next_page = url_for('index')
         return redirect(next_page)
     return render_template('login.html', form=form)
+
+@app.route('/register',methods=['GET','POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Registered.')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
 
 @app.route('/community/')
 @app.route('/community/index')
