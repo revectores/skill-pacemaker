@@ -8,12 +8,14 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
+    verify_code = StringField('VerifyCode', validators=[DataRequired()])
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     password = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
+    verify_code = StringField('VerifyCode', validators=[DataRequired()])
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()

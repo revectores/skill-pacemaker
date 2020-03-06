@@ -23,6 +23,11 @@
 <span style="color: red;">[{{ error }}]</span>
 {% endfor %}
 </p>
+<p>
+    {{form.verify_code.label}}
+    {{form.verify_code(size = 4)}}
+</p>
+<img class="verify_code" src="/code " onclick="this.src='/code?'+ Math.random()">
 <p>{{ form.submit() }}</p>
 </form>
 {% endblock %}
