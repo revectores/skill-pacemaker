@@ -5,7 +5,7 @@ from flask_login import login_required,current_user,login_user, logout_user
 from app.forms import LoginForm,RegistrationForm
 from app.models import User
 from io import BytesIO
-from app.utils import new_verify_code
+from app.utils import new_verify_code,is_valid_email,send_email
 
 @app.route('/')
 @app.route('/index')
@@ -42,6 +42,9 @@ def login():
         if session.get('image').lower() != form.verify_code.data.lower():
             flash('Wrong verify code.')
             return render_template('login.html', form=form)
+        if user.auth == False:
+            flash('Unauthenticated email address.')
+            return render_template('login.html', form=form)
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -58,13 +61,34 @@ def register():
         if session.get('image').lower() != form.verify_code.data.lower():
             flash('Wrong verify code.')
             return render_template('register.html', form=form)
-        user = User(username=form.username.data)
+        if not is_valid_email(form.mail_addr.data):
+            flash('Invalid email address.')
+            return render_template('register.html', form=form)
+        user = User(username=form.username.data,
+                    email = form.mail_addr.data,auth = False)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Registered.')
+        token = user.get_registration_token()
+        send_email('Verify',app.config['MAIL_USERNAME'],[user.email],token,render_template('mail.html',token = token))
+        flash('Please finish registration with the verification URL in your email address.')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
+
+@app.route('/register/<token>')
+def register_verify(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    user = User.verify_registration_token(token)
+    if not user:
+        return redirect(url_for('index'))
+    user.auth = True
+    return redirect(url_for('index'))
+
+@app.route('/profile/<username>')
+def profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('profile.html', user=user)
 
 @app.route('/community/')
 @app.route('/community/index')
@@ -85,8 +109,3 @@ def domain_dashboard():
 @login_required
 def community_new():
     return render_template('new_thread.html',uid = 'Edwin Sha')
-
-@app.route('/profile')
-@login_required
-def profile():
-    return render_template('profile.html')

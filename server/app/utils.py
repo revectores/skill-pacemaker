@@ -1,7 +1,9 @@
 import string
 import random
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
-
+from flask_mail import Message
+from app import mail
+import re
 def new_verify_code():
     def draw_lines(draw, num, width, height):
         for num in range(num):
@@ -24,3 +26,15 @@ def new_verify_code():
     draw_lines(draw, 2, width, height)
     img = img.filter(ImageFilter.GaussianBlur(radius=1.5))
     return img, code
+
+def send_email(subject, sender, recipients, text_body, html_body):
+    msg = Message(subject, sender=sender, recipients=recipients)
+    msg.body = text_body
+    msg.html = html_body
+    mail.send(msg)
+
+def is_valid_email(email):
+    if len(email) > 7:
+        if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
+            return True
+    return False

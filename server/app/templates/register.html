@@ -24,6 +24,10 @@
 {% endfor %}
 </p>
 <p>
+    {{form.mail_addr.label}}
+    {{form.mail_addr(size = 64)}}
+</p>
+<p>
     {{form.verify_code.label}}
     {{form.verify_code(size = 4)}}
 </p>
