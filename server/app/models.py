@@ -12,11 +12,11 @@ class User(UserMixin,db.Model):
     password_hash = db.Column(db.String(255))
     email = db.Column(db.String(64),index = True,unique = True)
     auth = db.Column(db.Integer,index = True)
-    '''
-    gender = db.Column(db.Integer)
-    avatar_name = db.Column(db.Integer,unique = True)
+    
+    gender = db.Column(db.Integer,index = True)
+    avatar_name = db.Column(db.String(255))
     io = db.Column(db.String(255))
-    '''
+    
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

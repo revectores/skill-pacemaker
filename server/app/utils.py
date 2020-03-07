@@ -4,6 +4,7 @@ from PIL import Image, ImageFont, ImageDraw, ImageFilter
 from flask_mail import Message
 from app import mail
 import re
+
 def new_verify_code():
     def draw_lines(draw, num, width, height):
         for num in range(num):
@@ -16,7 +17,7 @@ def new_verify_code():
     code = ''.join(random.sample(string.ascii_letters+string.digits, 4))
     width, height = 120, 50
     img = Image.new('RGB',(width, height),'white')
-    font = ImageFont.truetype('../res/font/auth.ttf', 40)
+    font = ImageFont.truetype('app/static/font/auth.ttf', 40)
     draw = ImageDraw.Draw(img)
     for item in range(4):
         draw.text((5+random.randint(-3,3)+23*item, 5+random.randint(-3,3)),

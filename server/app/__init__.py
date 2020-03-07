@@ -12,5 +12,6 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 mail = Mail(app)
-
+from flask_wtf.csrf import CsrfProtect
+CsrfProtect(app)
 from app import routes, models,forms

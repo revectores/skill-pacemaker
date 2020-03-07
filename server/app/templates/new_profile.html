@@ -1,0 +1,22 @@
+{% block content %}
+    <div class="container">
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+            </div>
+            {% endfor %}
+        
+        
+            {% block page_content %}{% endblock %}
+        </div>
+        User:{{user.username}}
+        <form action="" method="post" novalidate  enctype="multipart/form-data">\
+        {{form.avatar()}}
+        {{form.gender()}}<br>
+        {{form.io()}}<br>
+        {{ form.submit() }}<br>
+        {{ form.errors }}
+        {{form.csrf_token}}
+        </form>
+        {% endblock %}

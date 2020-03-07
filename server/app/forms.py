@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField,RadioField,FileField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from app.models import User
+from flask_wtf.file import FileAllowed,FileRequired
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -22,4 +23,12 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Please use a different username.')
-    
+
+class EditProfileForm(FlaskForm):
+    io = StringField('Self introduction')
+    gender = RadioField('Gender',
+                        choices = [('1','Male'),('0','Female'),('2','?')],
+                        validators=[DataRequired()])
+
+    avatar = FileField('Avatar',validators = [FileAllowed(['jpg','jpeg','gif','png'])])
+    submit = SubmitField('Submit')

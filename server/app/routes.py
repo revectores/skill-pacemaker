@@ -2,10 +2,11 @@ from app import app,db
 from werkzeug.urls import url_parse
 from flask import render_template,redirect,flash,url_for,request,session,make_response
 from flask_login import login_required,current_user,login_user, logout_user
-from app.forms import LoginForm,RegistrationForm
+from app.forms import LoginForm,RegistrationForm,EditProfileForm
 from app.models import User
 from io import BytesIO
 from app.utils import new_verify_code,is_valid_email,send_email
+import os
 
 @app.route('/')
 @app.route('/index')
@@ -65,7 +66,8 @@ def register():
             flash('Invalid email address.')
             return render_template('register.html', form=form)
         user = User(username=form.username.data,
-                    email = form.mail_addr.data,auth = False)
+                    email = form.mail_addr.data,auth = False,gender = 2,
+                    avatar_name = '/static/avatar/default.jpg',io = '0.0')
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -83,12 +85,37 @@ def register_verify(token):
     if not user:
         return redirect(url_for('index'))
     user.auth = True
+    db.session.add(user)
+    db.session.commit()
     return redirect(url_for('index'))
 
-@app.route('/profile/<username>')
+@app.route('/profile/<username>',methods=['GET','POST'])
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('profile.html', user=user)
+    if current_user.username == username:
+        return render_template('profile_with_edit.html', user=user,
+                            gender = ['Female','Male','?'][user.gender])
+    return render_template('profile.html', user=user,
+                            gender = ['Female','Male','?'][user.gender])
+
+@app.route('/new_profile',methods = ['GET','POST'])
+@login_required
+def new_profile():
+    user = User.query.filter_by(username = current_user.username).first_or_404()
+    form = EditProfileForm(io = user.io,gender = str(user.gender))
+    if form.validate_on_submit():
+        if not form.avatar.data is None:
+            avt = form.avatar.data
+            if not avt.filename == '':
+                avt.filename = user.username
+                avt.save('app/static/avatar/'+avt.filename+'.jpg')
+                user.avatar_name = '/static/avatar/'+avt.filename+'.jpg'
+        user.gender=int(form.gender.data)
+        user.io=form.io.data
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('profile',username = user.username))
+    return render_template('new_profile.html',form = form,user = user)
 
 @app.route('/community/')
 @app.route('/community/index')
