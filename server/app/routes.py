@@ -92,11 +92,8 @@ def register_verify(token):
 @app.route('/profile/<username>',methods=['GET','POST'])
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    if current_user.username == username:
-        return render_template('profile_with_edit.html', user=user,
-                            gender = ['Female','Male','?'][user.gender])
-    return render_template('profile.html', user=user,
-                            gender = ['Female','Male','?'][user.gender])
+    return render_template('profile.html',user = user,
+                            gender = ['女','男','神秘生物'][user.gender])
 
 @app.route('/new_profile',methods = ['GET','POST'])
 @login_required
@@ -108,7 +105,8 @@ def new_profile():
             avt = form.avatar.data
             if not avt.filename == '':
                 avt.filename = user.username
-                avt.save('app/static/avatar/'+avt.filename+'.jpg')
+                fn = 'app/static/avatar/'+avt.filename+'.jpg'
+                avt.save(fn)
                 user.avatar_name = '/static/avatar/'+avt.filename+'.jpg'
         user.gender=int(form.gender.data)
         user.io=form.io.data
