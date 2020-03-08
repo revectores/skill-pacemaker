@@ -11,7 +11,7 @@ import os
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('index.html',auth = current_user.is_authenticated)
 
 @app.route('/code')
 def code():

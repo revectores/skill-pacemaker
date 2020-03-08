@@ -1,3 +1,108 @@
-<html>
-    <caption>Index says:ZLYNB.</caption>
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>引智——全新在线自适应学习系统</title>
+
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIthttps://maxcdn.bootstrapcdn.com/bootstrap/3.3.7!">
+
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<ul class="nav nav-pills">
+				<li class="nav-item">
+					<a class="nav-link active" href="/index">引智</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/domain/dashboard">领域控制台</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/community">社区</a>
+				</li>
+				<li class="nav-item dropdown ml-md-auto">
+					 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown">用户</a>
+					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+						{% if auth %}  
+						<a class="dropdown-item" href="/profile/{{current_user.username}}">个人信息</a> <a class="dropdown-item" href="#">设置</a> 
+						<div class="dropdown-divider">
+						</div> <a class="dropdown-item" href="/logout">登出</a>
+						 {% else %} 
+						<a class="dropdown-item" href="/login">登录</a>
+						{% endif %} 
+					</div>
+				</li>
+			</ul>
+			<div class="carousel slide" id="carousel-733099">
+				<ol class="carousel-indicators">
+					<li data-slide-to="0" data-target="#carousel-733099" class="active">
+					</li>
+					<li data-slide-to="1" data-target="#carousel-733099">
+					</li>
+					<li data-slide-to="2" data-target="#carousel-733099">
+					</li>
+				</ol>
+				<div class="carousel-inner">
+					<div class="carousel-item active">
+						<img class="d-block w-100" height = 300 alt="Carousel Bootstrap First" src="https://www.layoutit.com/img/sports-q-c-1600-500-1.jpg">
+						<div class="carousel-caption">
+							<h4>
+								第一次撤硕大战
+							</h4>
+							<p>
+								老铁们，只有你们想不到dei，没有老八做不到dei啊！还是内句话，今天我老八，挑战一把吃88————兄弟们，奥利给！干了！
+							</p>
+						</div>
+					</div>
+					<div class="carousel-item">
+						<img class="d-block w-100" height = 300 alt="Carousel Bootstrap Second" src="https://www.layoutit.com/img/sports-q-c-1600-500-2.jpg">
+						<div class="carousel-caption">
+							<h4>
+								第二次撤硕大战
+							</h4>
+							<p>
+								老铁们啊，虽然不是同一个时间，但是同一个撤硕，我债赤挑战一把吃88。奥利给！干了兄弟们！
+							</p>
+						</div>
+					</div>
+					<div class="carousel-item">
+						<img class="d-block w-100" height = 300 alt="Carousel Bootstrap Third" src="https://www.layoutit.com/img/sports-q-c-1600-500-3.jpg">
+						<div class="carousel-caption">
+							<h4>
+								第三次撤硕大战
+							</h4>
+							<p>
+								老铁们啊，还是那句话，只有你们想不到dei，没有我老八做不到dei。你们不要笑我狼狈不堪，我也可以笑你，离开你的父母，比我吃死都难！奥利给！干～了兄弟们！
+							</p>
+						</div>
+					</div>
+				</div> <a class="carousel-control-prev" href="#carousel-733099" data-slide="prev"><span class="carousel-control-prev-icon"></span> <span class="sr-only">Previous</span></a> <a class="carousel-control-next" href="#carousel-733099" data-slide="next"><span class="carousel-control-next-icon"></span> <span class="sr-only">Next</span></a>
+			</div>
+			<div class="jumbotron">
+				<h2 align ="center">
+					全新自适应学习系统
+				</h2>
+				<p align ="center">
+					虽然长地不好看，里面装地是米饭。一口米肠一口蒜，简简单单的午饭！奥利给兄弟们，造他就完啦！
+				</p>
+				<p align ="center">
+					<a class="btn btn-primary btn-large" href="/domain/select">开始体验</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+  </body>
 </html>
