@@ -37,49 +37,33 @@
 					</div>
 				</li>
             </ul>
-            <br>
-            <h5>
-				进行中的领域
-			</h5>
-            {%if not learning_mats%}
             <div class="jumbotron">
-				<h5 align="center">
-					似乎没有正在进行中的领域……
-				</h5>
-				<p align="center">
-					为什么不试试呢？
-				</p>
-				<p align ="center">
-					<a class="btn btn-primary btn-large" href="/domain/select">选择新领域</a>
-				</p>
-			</div>
-            {%else%}
-
-            {%endif%}
-            <h5>
-				荣誉殿堂
-			</h5>
-            {%if not finished_doms%}
-            <div class="jumbotron">
-				<h5 align="center">
-					没有荣誉是荣誉的起点。
+                <h2 align="center">
+                    选得好，那让我们开始吧。
+                </h2>
+                <br>
+                <h5 align="center">
+                    {{name}}
                 </h5>
-			</div>
-            {%else%}
-
-            {%endif%}
+                <p align ="center">
+                    {{description}}
+                </p>
+                <blockquote class="blockquote">
+                    <p class="mb-0">
+                        无数的学习者与你同行。
+                    </p>
+                    <footer class="blockquote-footer">
+                        正在学习：{{learning}} 已经学完：{{finished}}
+                    </footer>
+                </blockquote>
+                <button type="button" class="btn btn-md btn-primary btn-block">
+                    开始学习
+                </button>
+            </div>
             <h5>
-				最近的学习记录
+                知识树形图
             </h5>
-            {%if not recs%}
-            <div class="jumbotron">
-				<h5 align="center">
-					学习记录找不到了。
-                </h5>
-			</div>
-            {%else%}
-
-            {%endif%}
+            <img src="{{tree}}" align="center"/>
 		</div>
 	</div>
 </div>

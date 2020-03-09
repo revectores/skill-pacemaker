@@ -45,9 +45,13 @@ class Domain(db.Model):
 
 class Node(db.Model):
     id = db.Column(db.Integer,primary_key = True)
-    prev = db.Column(db.Integer,nullable = True,index = True)
     test_file = db.Column(db.String(255),nullable = True)
     doamin_id = db.Column(db.Integer,db.ForeignKey('domain.id'),index = True)
+
+class Link(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    prev = db.Column(db.Integer,index = True)
+    nxt = db.Column(db.Integer,index = True)
 
 class Material(db.Model):
     id = db.Column(db.Integer,primary_key = True)

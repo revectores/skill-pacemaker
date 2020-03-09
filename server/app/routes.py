@@ -123,12 +123,19 @@ def community_index():
 @app.route('/domain/select')
 @login_required
 def domain_select():
-    return render_template('select.html',uid = 'Edwin Sha')
+    return render_template('select.html')
 
 @app.route('/domain/dashboard')
 @login_required
 def domain_dashboard():
-    return render_template('dashboard.html',uid = 'Edwin Sha')
+    return render_template('dashboard.html',learning_mats = [],finished_doms = [],recs = [])
+
+@app.route('/domain/index/<domain_name>')
+@login_required
+def domain_index(domain_name):
+    if domain_name == 'test':
+        return render_template('domain_index.html',name = '测试领域',tree = '/static/trees/test.jpg',
+                                learning = 233,finished = 2333,description = '毫无学习价值的测试领域')
 
 @app.route('/community/new_thread')
 @login_required
