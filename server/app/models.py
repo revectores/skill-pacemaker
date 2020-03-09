@@ -38,6 +38,31 @@ class User(UserMixin,db.Model):
             return
         return User.query.get(id)
 
+class Domain(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    name = db.Column(db.String(20))
+    description = db.Column(db.String(255),nullable = True)
+
+class Node(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    prev = db.Column(db.Integer,nullable = True,index = True)
+    test_file = db.Column(db.String(255),nullable = True)
+    doamin_id = db.Column(db.Integer,db.ForeignKey('domain.id'),index = True)
+
+class Material(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    node = db.Column(db.Integer,db.ForeignKey('node.id'),nullable = True,index = True)
+    material_file = db.Column(db.String(255),nullable = True)
+    creator_id = db.Column(db.Integer,nullable = True,index = True)
+
+class Record(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    timestamp = db.Column(db.Integer,index = True)
+    user_id = db.Column(db.Integer,db.ForeignKey('user.id'),index = True)
+    is_test = db.Column(db.Integer,index = True)
+    mat_id = db.Column(db.Integer,db.ForeignKey('material.id'),index = True,nullable = True)
+    score = db.Column(db.Integer,index = True,nullable = True)
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
