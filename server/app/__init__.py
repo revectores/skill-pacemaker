@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_wtf.csrf import CsrfProtect
+from flaskext.markdown import Markdown
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -16,5 +17,6 @@ login.login_view = 'login'
 mail = Mail(app)
 CsrfProtect(app)
 Bootstrap(app)
+Markdown(app)
 
 from app import routes, models,forms

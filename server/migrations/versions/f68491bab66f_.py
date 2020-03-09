@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 85790d3b5eac
-Revises: 3bf6f028cbae
-Create Date: 2020-03-09 09:30:59.260302
+Revision ID: f68491bab66f
+Revises: 
+Create Date: 2020-03-09 23:08:14.802764
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '85790d3b5eac'
-down_revision = '3bf6f028cbae'
+revision = 'f68491bab66f'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -24,16 +24,39 @@ def upgrade():
     sa.Column('description', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('node',
+    op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('prev', sa.Integer(), nullable=True),
-    sa.Column('test_file', sa.String(length=255), nullable=True),
-    sa.Column('doamin_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['doamin_id'], ['domain.id'], ),
+    sa.Column('username', sa.String(length=255), nullable=True),
+    sa.Column('password_hash', sa.String(length=255), nullable=True),
+    sa.Column('email', sa.String(length=64), nullable=True),
+    sa.Column('auth', sa.Integer(), nullable=True),
+    sa.Column('gender', sa.Integer(), nullable=True),
+    sa.Column('avatar_name', sa.String(length=255), nullable=True),
+    sa.Column('io', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_node_doamin_id'), 'node', ['doamin_id'], unique=False)
-    op.create_index(op.f('ix_node_prev'), 'node', ['prev'], unique=False)
+    op.create_index(op.f('ix_user_auth'), 'user', ['auth'], unique=False)
+    op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
+    op.create_index(op.f('ix_user_gender'), 'user', ['gender'], unique=False)
+    op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=True)
+    op.create_table('node',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('test_file', sa.String(length=255), nullable=True),
+    sa.Column('domain_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['domain_id'], ['domain.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_node_domain_id'), 'node', ['domain_id'], unique=False)
+    op.create_table('link',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('prev', sa.Integer(), nullable=True),
+    sa.Column('nxt', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['nxt'], ['node.id'], ),
+    sa.ForeignKeyConstraint(['prev'], ['node.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_link_nxt'), 'link', ['nxt'], unique=False)
+    op.create_index(op.f('ix_link_prev'), 'link', ['prev'], unique=False)
     op.create_table('material',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('node', sa.Integer(), nullable=True),
@@ -74,8 +97,15 @@ def downgrade():
     op.drop_index(op.f('ix_material_node'), table_name='material')
     op.drop_index(op.f('ix_material_creator_id'), table_name='material')
     op.drop_table('material')
-    op.drop_index(op.f('ix_node_prev'), table_name='node')
-    op.drop_index(op.f('ix_node_doamin_id'), table_name='node')
+    op.drop_index(op.f('ix_link_prev'), table_name='link')
+    op.drop_index(op.f('ix_link_nxt'), table_name='link')
+    op.drop_table('link')
+    op.drop_index(op.f('ix_node_domain_id'), table_name='node')
     op.drop_table('node')
+    op.drop_index(op.f('ix_user_username'), table_name='user')
+    op.drop_index(op.f('ix_user_gender'), table_name='user')
+    op.drop_index(op.f('ix_user_email'), table_name='user')
+    op.drop_index(op.f('ix_user_auth'), table_name='user')
+    op.drop_table('user')
     op.drop_table('domain')
     # ### end Alembic commands ###

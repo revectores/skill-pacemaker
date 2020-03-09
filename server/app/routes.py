@@ -3,10 +3,12 @@ from werkzeug.urls import url_parse
 from flask import render_template,redirect,flash,url_for,request,session,make_response
 from flask_login import login_required,current_user,login_user, logout_user
 from app.forms import LoginForm,RegistrationForm,EditProfileForm
-from app.models import User
+from app.models import User,Domain,Material,Record
 from io import BytesIO
-from app.utils import new_verify_code,is_valid_email,send_email
+from app.utils import new_verify_code,send_email,is_valid_email
 import os
+from markdown import markdown
+from time import time
 
 @app.route('/')
 @app.route('/index')
@@ -123,19 +125,35 @@ def community_index():
 @app.route('/domain/select')
 @login_required
 def domain_select():
+    #人工在前端添加领域
     return render_template('select.html')
 
 @app.route('/domain/dashboard')
 @login_required
 def domain_dashboard():
+    #TODO:获得学习材料，完成领域，学习记录矩阵
     return render_template('dashboard.html',learning_mats = [],finished_doms = [],recs = [])
 
 @app.route('/domain/index/<domain_name>')
 @login_required
 def domain_index(domain_name):
-    if domain_name == 'test':
-        return render_template('domain_index.html',name = '测试领域',tree = '/static/trees/test.jpg',
-                                learning = 233,finished = 2333,description = '毫无学习价值的测试领域')
+    domain = Domain.query.filter_by(name = domain_name).first_or_404()
+    return render_template('domain_index.html',domain = domain,learning = 233,finished = 2333)
+
+@app.route('/domain/learn/<mat_id>')
+@login_required
+def domain_learn(mat_id):
+    material = Material.query.filter_by(id = mat_id).first_or_404()
+    md_file = open('app/' + material.material_file)
+    record = Record(timestamp = time(),user_id = current_user.id,is_test = 0,mat_id = material.id)
+    db.session.add(record)
+    db.session.commit()
+    return render_template('domain_learn.html',md = md_file.read(),material = material)
+
+@app.route('/domain/test/<node>')
+@login_required
+def domain_test(mat_name):
+    pass
 
 @app.route('/community/new_thread')
 @login_required

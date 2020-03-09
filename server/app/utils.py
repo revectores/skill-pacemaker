@@ -4,6 +4,7 @@ from PIL import Image, ImageFont, ImageDraw, ImageFilter
 from flask_mail import Message
 from app import mail
 import re
+from functools import reduce
 
 def new_verify_code():
     def draw_lines(draw, num, width, height):

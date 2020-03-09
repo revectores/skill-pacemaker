@@ -42,16 +42,17 @@ class Domain(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     name = db.Column(db.String(20))
     description = db.Column(db.String(255),nullable = True)
+    tree_file = db.Column(db.String(255),nullable = True)
 
 class Node(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     test_file = db.Column(db.String(255),nullable = True)
-    doamin_id = db.Column(db.Integer,db.ForeignKey('domain.id'),index = True)
+    domain_id = db.Column(db.Integer,db.ForeignKey('domain.id'),index = True)
 
 class Link(db.Model):
     id = db.Column(db.Integer,primary_key = True)
-    prev = db.Column(db.Integer,index = True)
-    nxt = db.Column(db.Integer,index = True)
+    prev = db.Column(db.Integer,db.ForeignKey('node.id'),index = True)
+    nxt = db.Column(db.Integer,db.ForeignKey('node.id'),index = True)
 
 class Material(db.Model):
     id = db.Column(db.Integer,primary_key = True)
