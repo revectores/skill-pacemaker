@@ -86,7 +86,25 @@
 							</h5>
 						</div>
 						{%else%}
-
+							<table class="table">
+							<thead>
+								<tr>
+							   		<th>时间</th>
+									<th>领域</th>
+									<th>知识点</th>
+									<th>学习内容</th>   
+								</tr>
+							 </thead>
+							 <tbody>
+							{%for rec in recs%}
+								<tr>
+									{%for i in range(4)%}
+										<td>{{rec[i]}}</td>
+									{%endfor%}
+								</tr>
+							{%endfor%}
+							</tbody>
+							</table>
 						{%endif%}
 					</div>
 					<div class="col-md-1"></div>

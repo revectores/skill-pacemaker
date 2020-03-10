@@ -48,6 +48,7 @@ class Node(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     test_file = db.Column(db.String(255),nullable = True)
     domain_id = db.Column(db.Integer,db.ForeignKey('domain.id'),index = True)
+    name = db.Column(db.String(255),index = True)
 
 class Link(db.Model):
     id = db.Column(db.Integer,primary_key = True)
@@ -64,9 +65,9 @@ class Record(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     timestamp = db.Column(db.Integer,index = True)
     user_id = db.Column(db.Integer,db.ForeignKey('user.id'),index = True)
-    is_test = db.Column(db.Integer,index = True)
     mat_id = db.Column(db.Integer,db.ForeignKey('material.id'),index = True,nullable = True)
-    score = db.Column(db.Integer,index = True,nullable = True)
+    node_id = db.Column(db.Integer,db.ForeignKey('node.id'),index = True,nullable = True)
+    score = db.Column(db.Integer,index = True) #-1为学习，>=0为考试
 
 @login.user_loader
 def load_user(id):
