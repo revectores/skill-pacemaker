@@ -33,16 +33,22 @@
 						</div> <a class="dropdown-item" href="/logout">登出</a>
 						 {% else %} 
 						<a class="dropdown-item" href="/login">登录</a>
+						<a class="dropdown-item" href="/register">注册</a>
 						{% endif %} 
 					</div>
 				</li>
             </ul>
-            <h1>用户登录</h1><br>
             <div class="row">
-                <div class="col-md-4">
-                    {% from 'bootstrap/form.html' import render_form %}
-                    {{render_form(form)}}
-                </div>
+				<div class="col-md-2"> </div>
+                <div class="col-md-6">
+					<br>
+					<h2>资料更改</h2><br>
+					<div class="jumbotron">
+					{% from 'bootstrap/form.html' import render_form %}
+					{{render_form(form)}}
+					</div>
+				</div>
+				<div class="col-md-4"> </div>
             </div>
 
 		</div>

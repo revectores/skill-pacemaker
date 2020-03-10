@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField,RadioField,FileField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField,RadioField,FileField,TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo,Length
 from app.models import User
 from flask_wtf.file import FileAllowed,FileRequired
@@ -25,9 +25,9 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different username.')
 
 class EditProfileForm(FlaskForm):
-    avatar = FileField('Avatar',validators = [FileAllowed(['jpg','jpeg','gif','png'])])
-    gender = RadioField('Gender',
-                        choices = [('1','Male'),('0','Female'),('2','?')],
+    avatar = FileField('头像',validators = [FileAllowed(['jpg','jpeg','gif','png'])])
+    gender = RadioField('性别',
+                        choices = [('1','男'),('0','女'),('2','神秘生物')],
                         validators=[DataRequired()])
-    io = StringField('Self introduction',validators=[Length(max=128)])
-    submit = SubmitField('Submit')
+    io = TextAreaField('自我介绍',validators=[Length(max=128)])
+    submit = SubmitField('完成更改')

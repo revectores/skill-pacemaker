@@ -39,36 +39,51 @@
                             <div class="dropdown-divider">
                             </div> <a class="dropdown-item" href="/logout">登出</a>
                             {% else %}
-                            {{ bootstrap.load_css() }}       <a class="dropdown-item" href="/login">登录</a>
+                            <a class="dropdown-item" href="/login">登录</a>
+                            <a class="dropdown-item" href="/register">注册</a>
                             {% endif %}
                         </div>
                     </li>
                 </ul>
-                <h3>
-                    用户{{user.username}} 的个人资料
-                </h3><img src="{{user.avatar_name}}" width="128" height="128" />
-                <dl>
-                    <dt>
-                        性别： {{gender}}
-                    </dt>
-
-                    <dt>
-                        个人描述
-                    </dt>
-                    <dd>
-                        {{user.io}}
-                    </dd>
-
-                </dl>
-                {% if current_user.is_authenticated %}
-                    {% if current_user.username==user.username %}
-                        <a href = "/new_profile">
-                        <button type="button" class="btn btn-info">
-                            编辑资料
-                        </button>
-                    </a>
-                    {% endif %}
-                {% endif %}
+                <div class="row">
+                    <div class="col-md-1"> </div>
+                    <div class="col-md-3">
+                        <br>
+                        <h3>
+                            用户{{user.username}} 的个人资料
+                        </h3>
+                        <br>
+                        <div align="center">
+                            <img src="{{user.avatar_name}}" width="200" height="200" />
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="card-body" align="center">
+                                <b>{{user.username}}</b>,性别为<b>{{gender}}</b><br>
+                                邮箱地址<b>{{user.email}}</b>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="card-body" align="center">
+                                <b>{{user.username}}</b>说：<br>{{user.io}}
+                            </div>
+                        </div>
+                        {% if current_user.is_authenticated %}
+                        {% if current_user.username==user.username %}
+                        <br>
+                        <div align="center">
+                            <a href="/new_profile">
+                                <button type="button" class="btn btn-info">
+                                    编辑资料
+                                </button>
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8"> </div>
+                </div>
             </div>
         </div>
     </div>
