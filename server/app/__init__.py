@@ -19,4 +19,4 @@ CSRFProtect(app)
 Bootstrap(app)
 Markdown(app)
 
-from app import routes, models,forms
+from app import routes, models, forms
