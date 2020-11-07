@@ -19,7 +19,8 @@ def new_verify_code():
     code = ''.join(random.sample(string.ascii_letters + string.digits, 4))
     width, height = 120, 50
     img = Image.new('RGB', (width, height), 'white')
-    font = ImageFont.truetype('app/static/font/auth.ttf', 40)
+    font = ImageFont.truetype('auth.ttf', 40)
+    # font = ImageFont.load_default()
     draw = ImageDraw.Draw(img)
     for item in range(4):
         draw.text((5 + random.randint(-3, 3) + 23 * item, 5 + random.randint(-3, 3)),
