@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
@@ -20,3 +21,8 @@ Bootstrap(app)
 Markdown(app)
 
 from app import routes, models, forms
+from app.db_init import db_init
+
+if os.environ.get("DB_INIT"):
+	db_init()
+	

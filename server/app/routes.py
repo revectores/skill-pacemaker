@@ -21,6 +21,7 @@ app.register_blueprint(domain, url_prefix='/domain')
 app.register_blueprint(community, url_prefix='/community')
 
 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -37,3 +38,5 @@ def code():
     response.headers['Content-Type'] = 'image/gif'
     session['image'] = code
     return response
+
+

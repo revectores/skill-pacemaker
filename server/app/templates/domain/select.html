@@ -12,7 +12,6 @@
 </head>
 
 <body>
-
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
@@ -55,22 +54,27 @@
                             智能推荐，路径跟踪，内容丰富。
                         </p>
                     </div>
+
                     <div class="row">
+
+                        {%for domain in domains%}
                         <div class="col-md-6">
                             <div class="jumbotron">
                                 <h2 align="center">
-                                    测试领域
+                                    {{ domain.name }}
                                 </h2>
                                 <p align="center">
-                                    什么也学不到，因为这只是一个测试～☆
+                                    {{ domain.description }}
                                 </p>
-                                <a href="/domain/index/测试领域">
+                                <a href="/domain/{{ domain.id }}">
                                     <button type="button" class="btn btn-md btn-primary btn-block">
-                                        进入领域
+                                            进入领域
                                     </button>
                                 </a>
                             </div>
                         </div>
+                        {%endfor%}
+
                         <div class="col-md-6">
                             <div class="jumbotron">
                                 <h2 align="center">
@@ -84,6 +88,7 @@
                                 </button>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
                 <div class="col-md-1"></div>

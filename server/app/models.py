@@ -1,4 +1,6 @@
+import os
 from app import db
+from flask import url_for
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import login
@@ -46,17 +48,30 @@ class Domain(db.Model):
     tree_file = db.Column(db.String(255), nullable=True)
 
 
-class Node(db.Model):
+class Section(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    test_file = db.Column(db.String(255), nullable=True)
     domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'), index=True)
     name = db.Column(db.String(255), index=True)
 
 
-class Link(db.Model):
+class Node(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    prev = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
-    nxt = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
+    section_id = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
+    name = db.Column(db.String(255), index=True)
+
+
+class SectionLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'))
+    source = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
+    target = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
+
+
+class NodeLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    section_id = db.Column(db.Integer, db.ForeignKey('section.id'))
+    source = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
+    target = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
 
 
 class Material(db.Model):
@@ -75,7 +90,30 @@ class Record(db.Model):
     score = db.Column(db.Integer, index=True)  # -1为学习，>=0为考试
 
 
+class UserDomain(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'))
+    pretest = db.Column(db.Boolean)
+
+
+class UserSection(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    section_id = db.Column(db.Integer, db.ForeignKey('section.id'))
+    # progress = db.Column(db.)
+
+
+class UserNode(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    node_id = db.Column(db.Integer, db.ForeignKey('node.id'))
+    master = db.Column(db.Boolean)
+
+
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
 

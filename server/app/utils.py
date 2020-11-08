@@ -48,3 +48,24 @@ def is_valid_email(email):
 
 def test_recommend(node):
     return node + 1
+    
+
+def get_nodes_coordinates(ids, links):
+    depth = {id_: 0 for id_ in ids}
+    seq = {id_: 0 for id_ in ids}
+
+    for _ in range(len(ids)):
+        for link in links:
+            if depth[link[1]] < depth[link[0]] + 1:
+                depth[link[1]] = depth[link[0]] + 1
+
+    depth_cur = {}
+    for id_ in ids:
+        if depth[id_] not in depth_cur:
+            depth_cur[depth[id_]] = 0
+
+        seq[id_] = depth_cur[depth[id_]]
+        depth_cur[depth[id_]] += 1
+
+    nodes_coordinates = {id_: (seq[id_], depth[id_]) for id_ in depth.keys()}
+    return nodes_coordinates
