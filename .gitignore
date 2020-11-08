@@ -2,4 +2,3 @@
 .idea
 .DS_Store
 temp
-server/app/db_init.py
