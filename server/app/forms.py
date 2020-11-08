@@ -34,3 +34,7 @@ class EditProfileForm(FlaskForm):
                         validators=[DataRequired()])
     io = TextAreaField('自我介绍', validators=[Length(max=128)])
     submit = SubmitField('完成更改')
+
+class EditorForm(FlaskForm):
+    body = TextAreaField(u'正文', validators=[DataRequired(u'内容不能为空！')])
+    submit = SubmitField('提交')

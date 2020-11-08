@@ -1,3 +1,99 @@
-<html>
-    <caption>Community new thread with user:{{uid}} says:ZLYNB.</caption>
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <script src="//cdn.ckeditor.com/4.5.11/standard/ckeditor.js"></script>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{{ bootstrap.load_css() }}
+	<title>引智——全新在线自适应学习系统</title>
+
+	<meta name="description" content="Source code generated using layoutit.com">
+	<meta name="author" content="QwQ">
+</head>
+
+<body>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<ul class="nav nav-tabs">
+					<li class="nav-item">
+						<a class="nav-link active" href="/index">引智</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/domain/dashboard">领域控制台</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/community">社区</a>
+					</li>
+					<li class="nav-item dropdown ml-md-auto">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+							data-toggle="dropdown">用户</a>
+						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+							{% if current_user.is_authenticated %}
+							<a class="dropdown-item" href="/user/profile/{{current_user.username}}">个人信息</a> <a
+								class="dropdown-item" href="#">设置</a>
+							<div class="dropdown-divider">
+							</div> <a class="dropdown-item" href="/user/logout">登出</a>
+							{% else %}
+							<a class="dropdown-item" href="/user/login">登录</a>
+							<a class="dropdown-item" href="/user/register">注册</a>
+							{% endif %}
+						</div>
+					</li>
+				</ul>
+				</div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <h4>发表新主题</h4>
+                    <div class="tabbable" id="tabs-442903">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#tab1" data-toggle="tab">知识讨论</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#tab2" data-toggle="tab">杂谈</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#tab3" data-toggle="tab">开发建议</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active show" id="tab1">
+                                <div class="dropdown">
+				 
+                                    <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                                        领域选择
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                         <a class="dropdown-item" href="#">领域1</a> 
+                                         <a class="dropdown-item" href="#">领域2</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab2">
+
+                            </div>
+                            <div class="tab-pane" id="tab3">
+
+                            </div>
+                        </div>
+                    </div>
+                    {{ form.body(class="ckeditor") }}
+                    <br>
+                    <a class="btn btn-primary btn-large" href="/community">提交</a>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+	</div>
+	{{ bootstrap.load_js() }}
+</body>
+
 </html>
