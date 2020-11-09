@@ -41,8 +41,50 @@
                         </div>
                     </li>
                 </ul>
-                <div class="row">
 
+                <h1 align="center">{{ domain.name }}覆盖性测试</h1>
+
+                <div id="app">
+                    <div v-for="(question, qi) in questions">
+                        <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <div class="jumbotron">
+                                <div v-if="question.type == 'single-choice'">
+                                    <p> <% question.index + 1 %>. <% question.description %></p>
+                                    <div v-for="(choice, ci) in question.choices">
+                                        <div class="form-group">
+                                            <div class="form-control">
+                                                <label><input v-bind:id="concat(qi, ci)" class="input-sm" type="radio" v-bind:name="question.index">
+                                                <label v-bind:for="concat(qi, ci)"> <% choice %> </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div v-if="question.type == 'multiple-choice'">
+                                    <p> <% question.index + 1 %>. <% question.description %></p>
+                                    <div v-for="(choice, ci) in question.choices">
+                                        <div class="form-group">
+                                            <div class="form-control">
+                                                <input v-bind:id="concat(qi, ci)" class="input-sm" type="checkbox" v-bind:name="question.index">
+                                                <label v-bind:for="concat(qi, ci)"> <% choice %> </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8 mx-auto">
+                            <button type="button" class="btn btn-primary form-control">Submit</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,4 +93,40 @@
     {{ bootstrap.load_js() }}
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            questions: []
+        },
+        methods: {
+            concat: function(question_index, choice_index){
+                return question_index.toString() + '.' + choice_index.toString();
+            }
+        },
+        filters: {
+        },
+        created: function() {
+            var request = new XMLHttpRequest();
+            request.open('GET', '/static/pretest/{{ domain.id }}.json', true);
+            var _this = this;
+            request.onload = function() {
+                if (this.status >= 200 && this.status < 400) {
+                    _this.questions = JSON.parse(this.response);
+                } else {
+
+                }
+            };
+            request.onerror = function() {
+            };
+
+            console.log(this.questions);
+            request.send();
+        },
+        delimiters: ["<%", "%>"]
+    });
+
+</script>
 </html>

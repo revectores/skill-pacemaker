@@ -1,15 +1,17 @@
 import os
-from markdown import markdown
+import json
+from collections import Counter
 from io import BytesIO
 from time import time, localtime, strftime
 
+from markdown import markdown
 from werkzeug.urls import url_parse
 from flask import render_template, redirect, flash, url_for, request, session, make_response, Blueprint, jsonify
 from flask_login import login_required, current_user, login_user, logout_user
 
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
-from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, UserNode
+from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, UserDomain, UserNode
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend, get_nodes_coordinates
 
 
@@ -74,18 +76,23 @@ def domain_tree(domain_id):
     sections = Section.query.filter_by(domain_id=domain_id)
     links = SectionLink.query.filter_by(domain_id=domain_id)
     # nodes = Section.query().filter_by(domain_id=domain_id).join(Node, Node.section_id==Section.id)
-    nodes = db.session.query(Node.id).\
+    section_nodes = db.session.query(Section.id, Node.id).\
             join(Section, Section.id == Node.section_id).\
             filter(Section.domain_id == domain_id)
 
-    user_nodes = db.session.query(Node.id, Section.id).\
+    user_section_nodes = db.session.query(Section.id, Node.id).\
                     join(Section, Section.id == Node.section_id).\
                     join(UserNode, UserNode.id == Node.id).\
                     filter(Section.domain_id == domain_id).\
-                    filter(UserNode.master == True)
+                    filter(UserNode.mastered == True)
 
-    for user_node in user_nodes:
-        pass
+    user_domain = UserDomain.query.filter_by(domain_id=domain_id, user_id=current_user.id).first()
+
+    section_node_counts = Counter([section_node[0] for section_node in section_nodes])
+    user_section_node_counts = Counter([user_section_node[0] for user_section_node in user_section_nodes])
+
+    print(section_node_counts)
+    print(user_section_node_counts)
     # print(len(list(nodes)), len(list(user_nodes)))
 
     section_ids = [section.id for section in sections]
@@ -97,8 +104,20 @@ def domain_tree(domain_id):
         'nodes': [],
         'links': []
     }
+    colors = ['rgb(200, 200, 200)', 'rgb(100, 141, 200)', 'rgb(10, 20, 200)']
 
     for section in sections:
+        if not user_domain.pretest:
+            color = colors[0]
+        elif user_section_node_counts[section.id] == 0:
+            color = colors[0]
+        elif user_section_node_counts[section.id] < section_node_counts[section.id]:
+            color = colors[1]
+        elif user_section_node_counts[section.id] == section_node_counts[section.id]:
+            color = colors[2]
+        else:
+            color = colors[0]
+
         section_graph['nodes'].append({
             'id': str(section.id),
             'name': section.name,
@@ -106,7 +125,7 @@ def domain_tree(domain_id):
             'y': nodes_coordinates[section.id][1] * 100,
             'itemStyle': {
                 'normal': {
-                    # 'color': 'rgb(0, 105, 216)'
+                    'color': color,
                 }
             }
         })
@@ -138,13 +157,8 @@ def section_tree(section_id):
 
     node_ids = [node.id for node in nodes]
     link_tuples = [(link.source, link.target) for link in links]
-
     nodes_coordinates = get_nodes_coordinates(node_ids, link_tuples)
-
-    node_graph = {
-        'nodes': [],
-        'links': []
-    }
+    node_graph = {'nodes': [], 'links': []}
 
     for node in nodes:
         node_graph['nodes'].append({
@@ -163,11 +177,13 @@ def section_tree(section_id):
     return jsonify(node_graph)
 
 
+
 @domain.route('/pretest/<int:domain_id>')
 @login_required
 def pretest(domain_id):
     print(domain_id)
     domain = Domain.query.filter_by(id=domain_id).first_or_404()
+
     return render_template('domain/pretest.html', domain=domain)
 
 

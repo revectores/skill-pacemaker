@@ -108,7 +108,7 @@ class UserNode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     node_id = db.Column(db.Integer, db.ForeignKey('node.id'))
-    master = db.Column(db.Boolean)
+    mastered = db.Column(db.Boolean)
 
 
 

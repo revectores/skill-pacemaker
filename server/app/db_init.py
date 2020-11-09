@@ -71,12 +71,21 @@ def db_init():
 		NodeLink(section_id=6, source=15, target=16)
 	]
 
-	user_nodes = [
-		UserNode(user_id=1, node_id=1, master=True),
-		UserNode(user_id=1, node_id=2, master=True)
+	user_domains = [
+		UserDomain(user_id=1, domain_id=1, pretest=False),
+		UserDomain(user_id=1, domain_id=2, pretest=False)
 	]
 
-	records_list = [users, domains, sections, nodes, section_links, node_links, user_nodes]
+	user_nodes = [
+		UserNode(user_id=1, node_id=1, mastered=True),
+		UserNode(user_id=1, node_id=2, mastered=True),
+		UserNode(user_id=1, node_id=3, mastered=True),
+		UserNode(user_id=1, node_id=4, mastered=True),
+		UserNode(user_id=1, node_id=5, mastered=True),
+		UserNode(user_id=1, node_id=6, mastered=True),
+	]
+
+	records_list = [users, domains, sections, nodes, section_links, node_links, user_domains, user_nodes]
 	for records in records_list:
 		db.session.bulk_save_objects(records)
 
