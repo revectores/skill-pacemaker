@@ -16,7 +16,6 @@ from app.utils import new_verify_code, send_email, is_valid_email, test_recommen
 
 
 domain = Blueprint('domain', __name__)
-section = Blueprint('section', __name__)
 
 
 @app.template_filter('test')
@@ -24,7 +23,7 @@ def tt(t):
     return t + '11'
 
 
-@domain.route('/dashboard')
+@app.route('/learn/dashboard')
 @login_required
 def domain_dashboard():
     # TODO:获得学习材料，完成领域，学习记录矩阵
@@ -50,7 +49,7 @@ def domain_dashboard():
         recs.append(r)
         if len(recs) == 15:
             break
-    return render_template('domain/dashboard.html', learning_mats=mats, finished_doms=[], recs=recs)
+    return render_template('learn/dashboard.html', learning_mats=mats, finished_doms=[], recs=recs)
 
 
 
@@ -58,7 +57,7 @@ def domain_dashboard():
 @login_required
 def domain_select():
     domains = Domain.query.all()
-    return render_template('domain/select.html', domains=domains)
+    return render_template('learn/domain/select.html', domains=domains)
 
 
 
@@ -66,8 +65,15 @@ def domain_select():
 @login_required
 def domain_index(domain_id):
     domain = Domain.query.filter_by(id=domain_id).first_or_404()
-    return render_template('domain/index.html', domain=domain, learning=233, finished=2333)
+    user_domain = UserDomain.query.filter_by(user_id=current_user.id, domain_id=domain_id).first_or_404()
+    return render_template('learn/domain/index.html', domain=domain, user_domain=user_domain, learning=233, finished=2333)
 
+
+@domain.route('/next/<int:domain_id>')
+@login_required
+def domain_next(domain_id):
+    next_node = 7
+    return redirect(url_for(f'/learn/domain/node/{next_node}'), '302')
 
 
 @domain.route('/tree/<int:domain_id>')
@@ -91,8 +97,8 @@ def domain_tree(domain_id):
     section_node_counts = Counter([section_node[0] for section_node in section_nodes])
     user_section_node_counts = Counter([user_section_node[0] for user_section_node in user_section_nodes])
 
-    print(section_node_counts)
-    print(user_section_node_counts)
+    # print(section_node_counts)
+    # print(user_section_node_counts)
     # print(len(list(nodes)), len(list(user_nodes)))
 
     section_ids = [section.id for section in sections]
@@ -106,7 +112,9 @@ def domain_tree(domain_id):
     }
     colors = ['rgb(200, 200, 200)', 'rgb(100, 141, 200)', 'rgb(10, 20, 200)']
 
+
     for section in sections:
+        # print(user_domain.pretest)
         if not user_domain.pretest:
             color = colors[0]
         elif user_section_node_counts[section.id] == 0:
@@ -140,51 +148,23 @@ def domain_tree(domain_id):
 
 
 
-@domain.route('/section/<int:section_id>')
+@domain.route('/pretest/submit/<int:domain_id>')
 @login_required
-def section_index(section_id):
-    section = Section.query.filter_by(id=section_id).first_or_404()
+def pretest_submit(domain_id):
+    user_domain = UserDomain.query.filter_by(user_id=current_user.id, domain_id=domain_id).first_or_404()
+    # print(user_domain)
+    user_domain.pretest = True
+    db.session.commit()
 
-    return render_template('domain/section.html', section=section)
-
-
-
-@domain.route('/section/tree/<int:section_id>')
-@login_required
-def section_tree(section_id):
-    nodes = Node.query.filter_by(section_id=section_id)
-    links = NodeLink.query.filter_by(section_id=section_id)
-
-    node_ids = [node.id for node in nodes]
-    link_tuples = [(link.source, link.target) for link in links]
-    nodes_coordinates = get_nodes_coordinates(node_ids, link_tuples)
-    node_graph = {'nodes': [], 'links': []}
-
-    for node in nodes:
-        node_graph['nodes'].append({
-            'id': str(node.id),
-            'name': node.name,
-            'x': nodes_coordinates[node.id][0] * 100,
-            'y': nodes_coordinates[node.id][1] * 100
-        })
-
-    for link in links:
-        node_graph['links'].append({
-            'source': str(link.source),
-            'target': str(link.target)
-        })
-
-    return jsonify(node_graph)
+    return ('', 204)
 
 
 
 @domain.route('/pretest/<int:domain_id>')
 @login_required
 def pretest(domain_id):
-    print(domain_id)
     domain = Domain.query.filter_by(id=domain_id).first_or_404()
-
-    return render_template('domain/pretest.html', domain=domain)
+    return render_template('learn/domain/pretest.html', domain=domain)
 
 
 
@@ -198,7 +178,7 @@ def domain_learn(mat_id):
     record = Record(timestamp=time(), user_id=current_user.id, score=-1, mat_id=mat.id)
     db.session.add(record)
     db.session.commit()
-    return render_template('domain/learn.html', md=md_file.read(), material=mat,
+    return render_template('learn/domain/learn.html', md=md_file.read(), material=mat,
                            domain=dom, node=node)
 
 
@@ -209,12 +189,12 @@ def get_next(node_id):
     record = Record(timestamp=time(), user_id=current_user.id, score=100, node_id=node_id)
     db.session.add(record)
     db.session.commit()
-    return redirect('/domain/learn/' + str(test_recommend(int(node_id))))
+    return redirect('/learn/domain/learn/' + str(test_recommend(int(node_id))))
 
 
 
 @domain.route('/test/<name>')
 @login_required
 def domain_test(name):
-    return redirect('/domain/learn/next/' + str(Node.query.filter_by(name=name).first_or_404().id))
+    return redirect('/learn/domain/learn/next/' + str(Node.query.filter_by(name=name).first_or_404().id))
     # return render_template('domain_test.html', node = Node.query.filter_by(name = name).first_or_404())

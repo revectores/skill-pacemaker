@@ -19,7 +19,7 @@
                         <a class="nav-link active" href="/index">引智</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/domain/dashboard">领域控制台</a>
+                        <a class="nav-link" href="/learn/dashboard">领域控制台</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/community">社区</a>
@@ -63,10 +63,17 @@
                                     正在学习：{{learning}} 已经学完：{{finished}}
                                 </footer>
                             </blockquote>
-                            <a href="/domain/pretest/{{ domain.id }}">
-                            <button type="button" class="btn btn-md btn-primary btn-block">
-                                开始学习
-                            </button></a>
+
+                            {% if user_domain.pretest %}
+                            <a href="/learn/next/{{ domain.id }}">
+                                <button type="button" class="btn btn-md btn-primary btn-block">下一步</button>
+                            </a>
+                            {% else %}
+                            <a href="/learn/domain/pretest/{{ domain.id }}">
+                                <button type="button" class="btn btn-md btn-primary btn-block">开始覆盖性测试</button>
+                            </a>
+                            {% endif %}
+
                         </div>
                         <h5>
                             知识树形图
@@ -90,7 +97,7 @@
 
     function get_section_graph(){
         var request = new XMLHttpRequest();
-        request.open('GET', '/domain/tree/{{ domain.id }}', true);
+        request.open('GET', '/learn/domain/tree/{{ domain.id }}', true);
         request.onload = function() {
             if (this.status >= 200 && this.status < 400) {
                 tree = JSON.parse(this.response);
@@ -106,7 +113,7 @@
 
     knowledge_tree_chart.on('click', function (params) {
         console.log(params.data);
-        window.open('/domain/section/' + params.data['id'], '_self');
+        window.open('/learn/section/' + params.data['id'], '_self');
     });
 
 </script>

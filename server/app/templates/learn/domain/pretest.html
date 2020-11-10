@@ -20,7 +20,7 @@
                         <a class="nav-link active" href="/index">引智</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/domain/dashboard">领域控制台</a>
+                        <a class="nav-link" href="/learn/dashboard">领域控制台</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/community">社区</a>
@@ -82,7 +82,7 @@
 
                     <div class="row">
                         <div class="col-md-8 mx-auto">
-                            <button type="button" class="btn btn-primary form-control">Submit</button>
+                            <button type="button" class="btn btn-primary form-control" v-on:click="submit()">Submit</button>
                         </div>
                     </div>
                 </div>
@@ -104,6 +104,14 @@
         methods: {
             concat: function(question_index, choice_index){
                 return question_index.toString() + '.' + choice_index.toString();
+            },
+            submit: function(){
+                var request = new XMLHttpRequest();
+                request.open('GET', '/learn/domain/pretest/submit/{{ domain.id }}', true);
+                request.send();
+                window.setTimeout(function() {
+                    window.open('/learn/domain/' + {{ domain.id }}, '_self');
+                }, 500);
             }
         },
         filters: {
@@ -127,6 +135,9 @@
         },
         delimiters: ["<%", "%>"]
     });
+
+    function pretest_submit(){
+    }
 
 </script>
 </html>
