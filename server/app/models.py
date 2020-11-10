@@ -28,8 +28,13 @@ class User(UserMixin, db.Model):
 
     def get_registration_token(self, expires_in=6000):
         return jwt.encode(
-            {'registration': self.id, 'exp': time() + expires_in},
-            Config.SECRET_KEY, algorithm='HS256').decode('utf-8')
+            {
+                'registration': self.id,
+                'exp': time() + expires_in
+            },
+            Config.SECRET_KEY,
+            algorithm='HS256'
+        ).decode('utf-8')
 
     @staticmethod
     def verify_registration_token(token):
@@ -74,6 +79,18 @@ class NodeLink(db.Model):
     target = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
 
 
+class Read(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    node_id = db.Column(db.Integer)
+    contributor_id = db.Column(db.Integer)
+
+
+class Test(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    node_id = db.Column(db.Integer)
+    contributor_id = db.Column(db.Integer)
+
+
 class Material(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     node = db.Column(db.Integer, db.ForeignKey('node.id'), nullable=True, index=True)
@@ -110,6 +127,17 @@ class UserNode(db.Model):
     node_id = db.Column(db.Integer, db.ForeignKey('node.id'))
     mastered = db.Column(db.Boolean)
 
+
+class UserRead(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    read_id = db.Column(db.Integer, db.ForeignKey('read.id'))
+
+
+class UserTest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    test_id = db.Column(db.Integer, db.ForeignKey('test.id'))
 
 
 @login.user_loader

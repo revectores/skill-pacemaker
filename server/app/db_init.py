@@ -76,16 +76,20 @@ def db_init():
 		UserDomain(user_id=1, domain_id=2, pretest=False)
 	]
 
-	user_nodes = [
-		UserNode(user_id=1, node_id=1, mastered=True),
-		UserNode(user_id=1, node_id=2, mastered=True),
-		UserNode(user_id=1, node_id=3, mastered=True),
-		UserNode(user_id=1, node_id=4, mastered=True),
-		UserNode(user_id=1, node_id=5, mastered=True),
-		UserNode(user_id=1, node_id=6, mastered=True),
+	user_nodes = [UserNode(user_id=1, node_id=node_id, mastered=True) for node_id in range(7)] \
+			   + [UserNode(user_id=1, node_id=node_id, mastered=False) for node_id in range(7, 18)]
+
+	reads = [
+		Read(id=1, node_id=7, contributor_id=0),
+		Read(id=2, node_id=7, contributor_id=0),
 	]
 
-	records_list = [users, domains, sections, nodes, section_links, node_links, user_domains, user_nodes]
+	tests = [
+		Test(id=1, node_id=7, contributor_id=0),
+		Test(id=2, node_id=7, contributor_id=0),
+	]
+
+	records_list = [users, domains, sections, nodes, section_links, node_links, user_domains, user_nodes, reads, tests]
 	for records in records_list:
 		db.session.bulk_save_objects(records)
 

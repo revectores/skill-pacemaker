@@ -13,6 +13,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, UserDomain, UserNode
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend, get_nodes_coordinates
+from app.learn.node.node import node_index
 
 
 domain = Blueprint('domain', __name__)
@@ -35,14 +36,16 @@ def domain_dashboard():
         r.append(strftime("%Y-%m-%d %H:%M:%S", localtime(rec.timestamp)))
         if rec.score == -1:
             mat = Material.query.filter_by(id=rec.mat_id).first_or_404()
-            node = Node.query.filter_by(id=mat.node).first_or_404()
-            domain = Domain.query.filter_by(id=node.domain_id).first_or_404()
+            node = Node.query.get_or_404(mat.node)
+            section = Section.query.get_or_404(node.section_id)
+            domain = Domain.query.get_or_404(section.domain_id)
             r.append(domain.name)
             r.append(node.name)
             r.append('阅读材料')
         else:
-            node = Node.query.filter_by(id=rec.node_id).first_or_404()
-            domain = Domain.query.filter_by(id=node.domain_id).first_or_404()
+            node = Node.query.get_or_404(rec.node_id)
+            section = Section.query.get_or_404(node.section_id)
+            domain = Domain.query.get_or_404(section.domain_id)
             r.append(domain.name)
             r.append(node.name)
             r.append('测验得分 ' + str(rec.score))
@@ -72,8 +75,8 @@ def domain_index(domain_id):
 @domain.route('/next/<int:domain_id>')
 @login_required
 def domain_next(domain_id):
-    next_node = 7
-    return redirect(url_for(f'/learn/domain/node/{next_node}'), '302')
+    next_node_id = 7
+    return redirect(f'/learn/node/{next_node_id}', '302')
 
 
 @domain.route('/tree/<int:domain_id>')
@@ -83,14 +86,14 @@ def domain_tree(domain_id):
     links = SectionLink.query.filter_by(domain_id=domain_id)
     # nodes = Section.query().filter_by(domain_id=domain_id).join(Node, Node.section_id==Section.id)
     section_nodes = db.session.query(Section.id, Node.id).\
-            join(Section, Section.id == Node.section_id).\
-            filter(Section.domain_id == domain_id)
+                    join(Section, Section.id == Node.section_id).\
+                    filter(Section.domain_id == domain_id)
 
     user_section_nodes = db.session.query(Section.id, Node.id).\
-                    join(Section, Section.id == Node.section_id).\
-                    join(UserNode, UserNode.id == Node.id).\
-                    filter(Section.domain_id == domain_id).\
-                    filter(UserNode.mastered == True)
+                         join(Section, Section.id == Node.section_id).\
+                         join(UserNode, UserNode.id == Node.id).\
+                         filter(Section.domain_id == domain_id).\
+                         filter(UserNode.mastered == True)
 
     user_domain = UserDomain.query.filter_by(domain_id=domain_id, user_id=current_user.id).first()
 

@@ -25,23 +25,48 @@ def section_index(section_id):
     return render_template('learn/section/index.html', section=section)
 
 
+
 @section.route('/tree/<int:section_id>')
 @login_required
 def section_tree(section_id):
     nodes = Node.query.filter_by(section_id=section_id)
     links = NodeLink.query.filter_by(section_id=section_id)
+    domain, user_domain, section = db.session.query(Domain, UserDomain, Section).\
+                                   filter(Section.id == section_id).\
+                                   filter(Domain.id == Section.domain_id).\
+                                   filter(Domain.id == UserDomain.id).\
+                                   first()
+
+    user_nodes = db.session.query(Node, UserNode).\
+                 filter(Node.section_id == section_id).\
+                 filter(Node.id == UserNode.id)
 
     node_ids = [node.id for node in nodes]
     link_tuples = [(link.source, link.target) for link in links]
     nodes_coordinates = get_nodes_coordinates(node_ids, link_tuples)
     node_graph = {'nodes': [], 'links': []}
 
-    for node in nodes:
+    print(domain.id, domain.name, user_domain.pretest)
+
+    colors = ['rgb(200, 200, 200)', 'rgb(10, 20, 200)']
+    for (node, user_node) in user_nodes:
+        if not user_domain.pretest:
+            color = colors[0]
+        elif user_node.mastered:
+            color = colors[1]
+        else:
+            color = colors[0]
+
         node_graph['nodes'].append({
             'id': str(node.id),
             'name': node.name,
             'x': nodes_coordinates[node.id][0] * 100,
-            'y': nodes_coordinates[node.id][1] * 100
+            'y': nodes_coordinates[node.id][1] * 100,
+            'itemStyle': {
+                'normal': {
+                    'color': color
+                }
+            }
         })
 
     for link in links:
@@ -51,3 +76,6 @@ def section_tree(section_id):
         })
 
     return jsonify(node_graph)
+
+
+
