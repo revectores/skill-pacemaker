@@ -4,13 +4,14 @@ from app.models import *
 def db_init():
 	db.drop_all()
 	db.create_all()
+	password_hash = "pbkdf2:sha256:150000$KSC58uVd$9ff4385d31b398a8d1f0b4fee34df4589dc75f7c24d067c2d203cdb9233d182f"
 	users = [
-	    User(id=1, username="1", password_hash="pbkdf2:sha256:150000$KSC58uVd$9ff4385d31b398a8d1f0b4fee34df4589dc75f7c24d067c2d203cdb9233d182f", email="1@qq.com")
+	    User(id=1, username="1", password_hash=password_hash, email="1@qq.com", gender=0, avatar_name="admin")
 	]
 
 	domains = [
 	    # Domain(id=1, name="测试领域", description="测试领域", tree_file="test.tree"),
-	    Domain(id=1, name="Python", description="Python变量、函数、数据结构、流程控制、面向对象机制"),
+	    Domain(id=1, name="Python", description="Python变量、函数、数据结构、流程控制、面向对象机制", node_count=17),
 	    Domain(id=2, name="C", description="C变量、函数、流程控制"),
 	    Domain(id=3, name="编码", description="整数、浮点数、字符的编码方式") 
 	]
@@ -72,21 +73,25 @@ def db_init():
 	]
 
 	user_domains = [
-		UserDomain(user_id=1, domain_id=1, pretest=False),
-		UserDomain(user_id=1, domain_id=2, pretest=False)
+		UserDomain(user_id=1, domain_id=1, pretest=False, mastered_node_count=7),
+		UserDomain(user_id=1, domain_id=2, pretest=False, mastered_node_count=0)
 	]
 
-	user_nodes = [UserNode(user_id=1, node_id=node_id, mastered=True) for node_id in range(7)] \
-			   + [UserNode(user_id=1, node_id=node_id, mastered=False) for node_id in range(7, 18)]
+
+	user_nodes = [UserNode(user_id=1, node_id=node_id, mastered=False) for node_id in range(18)]
+	print(user_nodes[2].node_id)
+	print(user_nodes[3].node_id)
+	user_nodes[2].mastered = True
+	user_nodes[3].mastered = True
 
 	reads = [
-		Read(id=1, node_id=7, contributor_id=0),
-		Read(id=2, node_id=7, contributor_id=0),
+		Read(id=1, node_id=1, contributor_id=0),
+		Read(id=2, node_id=1, contributor_id=0),
 	]
 
 	tests = [
-		Test(id=1, node_id=7, contributor_id=0),
-		Test(id=2, node_id=7, contributor_id=0),
+		Test(id=1, node_id=1, contributor_id=0),
+		Test(id=2, node_id=1, contributor_id=0),
 	]
 
 	records_list = [users, domains, sections, nodes, section_links, node_links, user_domains, user_nodes, reads, tests]

@@ -50,7 +50,7 @@ class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
     description = db.Column(db.String(255), nullable=True)
-    tree_file = db.Column(db.String(255), nullable=True)
+    node_count = db.Column(db.Integer, default=0)
 
 
 class Section(db.Model):
@@ -112,6 +112,7 @@ class UserDomain(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'))
     pretest = db.Column(db.Boolean)
+    mastered_node_count = db.Column(db.Integer)
 
 
 class UserSection(db.Model):

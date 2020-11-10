@@ -25,6 +25,7 @@ def node_index(node_id):
 	return redirect(f'/learn/node/read/{read_id}', '302')
 
 
+
 @node.route('/read/<int:read_id>')
 @login_required
 def node_read(read_id):
@@ -32,13 +33,22 @@ def node_read(read_id):
 	node = Node.query.get_or_404(read.node_id)
 	section = Section.query.get_or_404(node.section_id)
 	domain = Domain.query.get_or_404(section.domain_id)
+	user_domain = UserDomain.query.get_or_404(section.domain_id)
 
-	md_file = open('/Users/rex/Library/Mobile Documents/com~apple~CloudDocs/dev/skill-pacemaker/server/app/static/material/read/1.html')
-	# open('../../static/material/read/1.md')
-	return render_template('learn/node/read.html', md=md_file.read(), domain=domain, node=node)
+	read_html_file = open(app.root_path + f"/static/read/{read_id}.html")
+	return render_template('learn/node/read.html', read_html=read_html_file.read(),
+						   domain=domain, section=section, node=node, user_domain=user_domain)
 
 
-@node.route('/test/<int:test_id>')
+
+@node.route('/test/<int:node_id>')
 @login_required
-def node_test(test_id):
-	pass
+def node_test(node_id):
+	node = Node.query.get_or_404(node_id)
+	section = Section.query.get_or_404(node.section_id)
+	domain = Domain.query.get_or_404(section.domain_id)
+	user_domain = UserDomain.query.get_or_404(section.domain_id)
+
+	return render_template('learn/node/test.html',
+						   domain=domain, section=section, node=node, user_domain=user_domain)
+
