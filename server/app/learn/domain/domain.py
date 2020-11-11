@@ -31,6 +31,7 @@ def domain_dashboard():
     mats = []
 
     recs = []
+    """
     for rec in Record.query.filter_by(user_id=current_user.id).order_by(Record.timestamp.desc()).all():
         r = []  # 时间，领域，知识点，内容
         r.append(strftime("%Y-%m-%d %H:%M:%S", localtime(rec.timestamp)))
@@ -52,7 +53,8 @@ def domain_dashboard():
         recs.append(r)
         if len(recs) == 15:
             break
-    return render_template('learn/dashboard.html', learning_mats=mats, finished_doms=[], recs=recs)
+    """
+    return render_template('learn/dashboard.html')
 
 
 
@@ -61,6 +63,48 @@ def domain_dashboard():
 def domain_select():
     domains = Domain.query.all()
     return render_template('learn/domain/select.html', domains=domains)
+
+
+@domain.route('/list')
+@login_required
+def domain_list():
+    query = Domain.query.all()
+
+    domains = {
+        domain.id: {
+            'domain_id':    domain.id,
+            'name':         domain.name,
+            'description':  domain.description,
+            'node_count':   domain.node_count
+        } for domain in query
+    }
+
+    return jsonify(domains)
+
+
+@domain.route('/list/user/<int:user_id>')
+@login_required
+def user_domain_list(user_id):
+    query = db.session.query(Domain, UserDomain).\
+            filter(Domain.id == UserDomain.id).\
+            filter(UserDomain.user_id == user_id).all()
+
+    user_domains = {
+        domain.id: {
+            'domain_id':    domain.id,
+            'name':         domain.name,
+            'description':  domain.description,
+            'node_count':   domain.node_count,
+            'user_id':      user_domain.user_id,
+            'selected':     user_domain.selected,
+            'pretest':      user_domain.pretest,
+            'mastered_node_count': user_domain.mastered_node_count
+        }
+        for domain, user_domain in query
+    }
+
+    # user_domains = [{key: value for (key, value) in dict(r[0].__dict__, **r[1].__dict__).items() if key[0] != '_'} for r in jquery]
+    return jsonify(user_domains)
 
 
 

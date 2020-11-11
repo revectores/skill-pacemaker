@@ -85,33 +85,21 @@
     {{ bootstrap.load_js() }}
 </body>
 
+<script src="/static/script/vue.min.js"></script>
 <script src="/static/script/echarts.min.js"></script>
+
+<script src="/static/script/req.js"></script>
+<script src="/static/script/domain.js"></script>
 <script src="/static/script/utils.js"></script>
 <script src="/static/script/tree.js"></script>
 <script>
     let knowledge_tree_chart = echarts.init(document.getElementById('knowledge_tree'));
-    get_section_graph();
-
-    function get_section_graph(){
-        var request = new XMLHttpRequest();
-        request.open('GET', '/learn/domain/tree/{{ domain.id }}', true);
-        request.onload = function() {
-            if (this.status >= 200 && this.status < 400) {
-                tree = JSON.parse(this.response);
-                console.log(tree);
-                knowledge_tree_chart.setOption(option=get_knowledge_tree_option(tree));
-            } else {
-            }
-        };
-        request.onerror = function() {
-        };
-        request.send();
-    }
+    tree = JSON.parse(get_domain_tree({{ domain.id }}));
+    knowledge_tree_chart.setOption(option=get_knowledge_tree_option(tree));
 
     knowledge_tree_chart.on('click', function (params) {
         console.log(params.data);
         window.open('/learn/section/' + params.data['id'], '_self');
     });
-
 </script>
 </html>

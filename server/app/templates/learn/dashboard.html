@@ -12,7 +12,6 @@
 </head>
 
 <body>
-
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-12">
@@ -43,27 +42,49 @@
 					</li>
 				</ul>
 				<br>
+
+				<div id="app">
 				<div class="row">
 					<div class="col-md-1"></div>
 					<div class="col-md-10">
 						<h5>
 							进行中的领域
 						</h5>
-						{%if not learning_mats%}
-						<div class="jumbotron">
-							<h5 align="center">
-								似乎没有正在进行中的领域……
-							</h5>
-							<p align="center">
-								为什么不试试呢？
-							</p>
-							<p align="center">
-								<a class="btn btn-primary btn-large" href="/learn/domain/select">选择新领域</a>
-							</p>
-						</div>
-						{%else%}
 
-						{%endif%}
+						<div v-if="user_domains">
+							<div v-for="user_domain in user_domains">
+								<div class="jumbotron">
+									<h3 align="center"><% user_domain.name %></h3>
+									<p align="center"><% user_domain.description %></p>
+									<p align="center">当前进度: <% user_domain.mastered_node_count %> / <% user_domain.node_count  %> </p>
+									<p align="center">
+										<a class="btn btn-primary btn-large" v-bind:href="'/learn/domain/' + user_domain.domain_id ">继续学习</a>
+									</p>
+								</div>
+							</div>
+							<div class="jumbotron">
+								<h5 align="center">
+									尝试探索更多领域!
+								</h5>
+								<p align="center">
+									<a class="btn btn-primary btn-large" href="/learn/domain/select">选择新领域</a>
+								</p>
+							</div>
+
+						<div v-else>
+							<div class="jumbotron">
+								<h5 align="center">
+									似乎没有正在进行中的领域……
+								</h5>
+								<p align="center">
+									为什么不试试呢？
+								</p>
+								<p align="center">
+									<a class="btn btn-primary btn-large" href="/learn/domain/select">选择新领域</a>
+								</p>
+							</div>
+						</div>
+
 						<h5>
 							荣誉殿堂
 						</h5>
@@ -106,13 +127,49 @@
 							</tbody>
 							</table>
 						{%endif%}
+
+						<h5>
+							学习记录
+						</h5>
+		
+				        <div id="time_range" style="height:500px;"></div>
 					</div>
 					<div class="col-md-1"></div>
+				</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	{{ bootstrap.load_js() }}
 </body>
+
+<script src="/static/script/echarts.min.js"></script>
+<script src="/static/script/vue.min.js"></script>
+
+<script src="/static/script/gantt_chart.js"></script>
+<script src="/static/script/req.js"></script>
+<script src="/static/script/domain.js"></script>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+        	domains: {},
+        },
+        methods: {
+        },
+        filters: {
+        },
+        created: function() {
+        	this.user_domains = JSON.parse(get_user_domains(1));
+        	console.log(this.user_domains);
+        },
+		 delimiters: ["<%", "%>"]
+ 
+    });
+
+	var time_range_chart = echarts.init(document.getElementById('time_range'));
+    time_range_chart.setOption(option = get_gantt_option());
+</script>
 
 </html>
