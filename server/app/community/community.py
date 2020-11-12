@@ -27,3 +27,8 @@ def community_index():
 def community_new():
     form = EditorForm()
     return render_template('community/new_thread.html', uid='Edwin Sha',form = form)
+
+@community.route('/t/<tid>')
+def community_thread(tid):
+    form = EditorForm()
+    return render_template('community/thread.html',form = form)
