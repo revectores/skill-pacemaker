@@ -7,7 +7,7 @@ digraph {
     
     index [label="主页"]
     user [label="用户"]
-    domain_dashboard [label="领域控制台页面"]
+    domain_dashboard [label="控制台页面"]
     domain_select [label="新领域选择页面"]
     domain_intro [label="领域概况页面"]
     domain [label="特定领域页面"]

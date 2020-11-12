@@ -1,0 +1,39 @@
+[
+	{ 
+		"index": 0,
+		"description": "Python中用于输出的函数是",
+		"type": "single-choice",
+		"choices": [
+			"printf",
+			"echo",
+			"print",
+			"console.log"
+		],
+		"answer": 2
+	}, 
+	{
+		"index": 1,
+		"description": "读入一个字符串并存储到变量string中, 以下哪种方法是正确的",
+		"type": "single-choice",
+		"choices" : [
+			"input('string')",
+			"string = input()",
+			"print('string')",
+			"string = read()"
+		],
+		"answer": 1
+	},
+	{
+		"index": 2,
+		"description": "以下哪些是合法的Python字符串",
+		"type": "multiple-choice",
+		"choices": [
+			"\"string\"",
+			"`string`",
+			"'string'",
+			"\"\"\"string\"\"\""
+		],
+		"answer": [0, 2, 3]
+	}
+]
+

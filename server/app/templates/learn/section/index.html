@@ -19,7 +19,7 @@
                         <a class="nav-link active" href="/index">引智</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/domain/dashboard">领域控制台</a>
+                        <a class="nav-link" href="/learn/dashboard">控制台</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/community">社区</a>
@@ -39,58 +39,25 @@
                             {% endif %}
                         </div>
                     </li>
+                    <div id="knowledge_tree" style="width:100%; height:500px;"></div>
+
                 </ul>
-                <div class="row">
-                    <div class="col-md-1"></div>
-                    <div class="col-md-10">
-                        <br>
-                        <div class="jumbotron">
-                            <h2 align="center">
-                                选得好，那让我们开始吧。
-                            </h2>
-                            <br>
-                            <h5 align="center">
-                                {{ domain.name }}
-                            </h5>
-                            <p align="center">
-                                {{ domain.description }}
-                            </p>
-                            <blockquote class="blockquote">
-                                <p class="mb-0">
-                                    无数的学习者与你同行。
-                                </p>
-                                <footer class="blockquote-footer">
-                                    正在学习：{{learning}} 已经学完：{{finished}}
-                                </footer>
-                            </blockquote>
-                            <a href="/domain/pretest/{{ domain.id }}">
-                            <button type="button" class="btn btn-md btn-primary btn-block">
-                                开始学习
-                            </button></a>
-                        </div>
-                        <h5>
-                            知识树形图
-                        </h5>
-                        <div id="knowledge_tree" style="width:100%; height:500px;"></div>
-                    </div>
-                    <div class="col-md-1"></div>
-                </div>
             </div>
         </div>
     </div>
     {{ bootstrap.load_js() }}
 </body>
 
-<script src="https://cdn.bootcdn.net/ajax/libs/echarts/4.8.0/echarts.min.js"></script>
+<script src="/static/script/echarts.min.js"></script>
 <script src="/static/script/utils.js"></script>
 <script src="/static/script/tree.js"></script>
 <script>
     let knowledge_tree_chart = echarts.init(document.getElementById('knowledge_tree'));
-    get_section_graph();
+    get_node_graph();
 
-    function get_section_graph(){
+    function get_node_graph(){
         var request = new XMLHttpRequest();
-        request.open('GET', '/domain/tree/{{ domain.id }}', true);
+        request.open('GET', '/learn/section/tree/{{ section.id }}', true);
         request.onload = function() {
             if (this.status >= 200 && this.status < 400) {
                 tree = JSON.parse(this.response);
@@ -103,11 +70,6 @@
         };
         request.send();
     }
-
-    knowledge_tree_chart.on('click', function (params) {
-        console.log(params.data);
-        window.open('/domain/section/' + params.data['id'], '_self');
-    });
 
 </script>
 </html>
