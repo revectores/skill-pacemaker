@@ -107,7 +107,7 @@
 							   		<th>时间段</th>
 									<th>领域</th>
 									<th></th>
-									<th></th>   
+									<th></th>
 								</tr>
 							 </thead>
 							 <tbody>
@@ -189,9 +189,9 @@
         		}
         	}
 
-        	domains = Object.keys(this.domains);
+        	domains  = Object.keys(this.domains);
         	sections = Object.keys(this.sections);
-        	domain_names = [];
+        	domain_names  = [];
         	section_names = [];
 
         	for (const id in this.domains) {
@@ -202,8 +202,8 @@
         	}
 
         	for (const section_id in this.sections) {
-        		domain_id = this.sections[section_id].domain_id;
-        		domain_name = this.domains[domain_id].name;
+        		domain_id    = this.sections[section_id].domain_id;
+        		domain_name  = this.domains[domain_id].name;
         		section_name = this.sections[section_id].name;
 
         		if (!(domain_name in domain2sections)) {
@@ -217,14 +217,10 @@
     });
 
     // let treemap_chart = echarts.init(document.getElementById('treemap_chart'));
-	let time_range_chart = echarts.init(document.getElementById('time_range'));
-	let tree_chart = echarts.init(document.getElementById('tree_chart'));
-
-    time_range_chart.setOption(option = generate_gantt_option(app.logs, domain_names));
-
     intervals = [];
     app.logs.forEach((log) => {
     	intervals.push({
+    		'id': 				log.domain_id,
     		'type_name': 		app.domains[log.domain_id].name,
     		'subtype_name': 	app.sections[log.section_id].name,
     		'start': 			new Date(log.start),
@@ -232,6 +228,9 @@
     	})
     });
 
+	let time_range_chart = echarts.init(document.getElementById('time_range'));
+	let tree_chart = echarts.init(document.getElementById('tree_chart'));
+    time_range_chart.setOption(option = generate_gantt_option(intervals, domain_names));
     tree_chart.setOption(option = get_tree_chart(intervals, domain_names, section_names, domain2sections));
 </script>
 <!--<script src="/static/script/treemap_chart.js"></script>-->

@@ -36,6 +36,8 @@ def node_index(node_id):
 	return render_template('learn/node/index.html')
 
 
+
+
 @node_api.route('/<int:node_id>')
 @login_required
 def node_info(node_id):
@@ -61,6 +63,20 @@ def node_info(node_id):
 	}
 
 	return jsonify(node)
+
+
+@node_api.route('/get_by_domain/<int:domain_id>')
+def get_section_by_domain(domain_id):
+    query = db.session.query(Node, Section).\
+    		filter(Node.section_id == Section.domain_id).\
+    		filter(Section.domain_id == domain_id).\
+    		all()
+
+    nodes_q = [q[0] for q in query]
+    nodes = {node.id: node for node in nodes_q}
+
+    return jsonify(nodes)
+
 
 
 @node.route('/material/<int:material_id>')

@@ -74,12 +74,12 @@ function generate_gantt_option(logs, categories) {
     logs.forEach(function(log){
         console.log(log);
         data.push({
-            name: log.domain_id,
+            name: log.type_name,
             value: [
-                log.domain_id - 1,
-                new Date(log.start),
-                new Date(log.end),
-                (new Date(log.end) - new Date(log.start))/1000,
+                log.id - 1,
+                log.start,
+                log.end,
+                (log.end - log.start)/1000,
                 log.id
                 // range.subtype_index
             ],

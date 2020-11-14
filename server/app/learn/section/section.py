@@ -28,7 +28,16 @@ def section_index(section_id):
 
 
 
-@section_api.route('/<int:section_id>')
+@section_api.route('/get/')
+def sections():
+    query = db.session.query(Section).all()
+    sections = {section.id: section for section in query}
+
+    return jsonify(sections)
+
+
+
+@section_api.route('/get/<int:section_id>')
 def section_info(section_id):
     # query = db.session.query(section, usersection).\
     #         filter(section.id == section_id).\
@@ -54,13 +63,17 @@ def section_info(section_id):
     return jsonify(section)
 
 
-
-@section_api.route('/')
-def sections():
-    query = db.session.query(Section).all()
+@section_api.route('/get_by_domain/<int:domain_id>')
+def get_section_by_domain(domain_id):
+    query = db.session.query(Section).\
+            filter_by(domain_id=domain_id).\
+            all()
     sections = {section.id: section for section in query}
 
     return jsonify(sections)
+    # query = db.session.query 
+
+
 
 
 

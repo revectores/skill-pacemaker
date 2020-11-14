@@ -78,10 +78,38 @@
                                 </a>
                             </div>
                         </div>
-                        <h5>
-                            知识树形图
-                        </h5>
+                        <h5>知识树形图</h5>
                         <div id="knowledge_tree_chart" style="width:100%; height:500px;"></div>
+
+                        <h5><% user_domain.name %> 最近的学习记录</h5>
+                        <div v-if="logs.length">
+                            <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>时间段</th>
+                                    <th>领域</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                             </thead>
+                             <tbody>
+                                <tr v-for="log in logs">
+                                    <td><% log.start %> ~ <% log.end %></td>
+                                    <td><% user_domain.name %> /
+                                        <% sections[log.section_id].name %> /
+                                        <% nodes[log.node_id].name %></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                        <div v-else class="jumbotron">
+                            <h5 align="center">还没有学习记录</h5>
+                        </div>
+
+                        <div id="time_range" style="height:500px;"></div>
+                        <div id="tree_chart" style="height:500px;"></div>
                     </div>
                     <div class="col-md-1"></div>
                 </div>
@@ -94,18 +122,27 @@
 <script src="/static/script/vue.min.js"></script>
 <script src="/static/script/echarts.min.js"></script>
 
+<script src="/static/script/gantt_chart.js"></script>
+<script src="/static/script/tree_chart.js"></script>
+
 <script src="/static/script/req.js"></script>
 <script src="/static/script/api.js"></script>
 <script src="/static/script/utils.js"></script>
 <script src="/static/script/tree.js"></script>
 <script>
     let domain_id = window.location.href.split('/').pop();
+    let section2nodes = {};
+    let section_names = [];
+    let node_names = [];
 
     var app = new Vue({
         el: '#app',
         data: {
             domain_id: domain_id,
-            user_domain: {}
+            user_domain: {},
+            sections: {},
+            nodes: {},
+            logs: {}
         },
         methods: {
         },
@@ -113,6 +150,28 @@
         },
         created: function() {
             this.user_domain = JSON.parse(get_user_domain(this.domain_id));
+            this.sections = JSON.parse(get_sections(this.domain_id));
+            this.nodes = JSON.parse(get_nodes());
+            this.logs = JSON.parse(get_domain_logs(this.domain_id));
+
+
+            for (const id in this.sections) {
+                section_names.push(this.sections[id].name);
+            }
+            for (const id in this.nodes) {
+                node_names.push(this.nodes[id].name);
+            }
+
+            for (const node_id in this.nodes) {
+                section_id   = this.nodes[node_id].section_id;
+                section_name = this.sections[section_id].name;
+                node_name    = this.nodes[node_id].name;
+
+                if (!(node_name in section2nodes)) {
+                    section2nodes[section_name] = [];
+                }
+                section2nodes[section_name].push(node_name);
+            }
         },
         delimiters: ["<%", "%>"]
     });
@@ -123,5 +182,22 @@
     knowledge_tree_chart.on('click', function (params) {
         window.open('/learn/section/' + params.data['id'], '_self');
     });
+
+    intervals = [];
+    app.logs.forEach((log) => {
+        intervals.push({
+            'id':               log.section_id,
+            'type_name':        app.sections[log.section_id].name,
+            'subtype_name':     app.nodes[log.node_id].name,
+            'start':            new Date(log.start),
+            'end':              new Date(log.end)
+        })
+    });
+
+    let time_range_chart = echarts.init(document.getElementById('time_range'));
+    let tree_chart = echarts.init(document.getElementById('tree_chart'));
+    time_range_chart.setOption(option = generate_gantt_option(intervals, section_names));
+    tree_chart.setOption(option = get_tree_chart(intervals, section_names, node_names, section2nodes));
+
 </script>
 </html>
