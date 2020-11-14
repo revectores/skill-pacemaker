@@ -25,8 +25,10 @@ get_domain_tree = (domain_id) => req(GET_DOMAIN_TREE_API)(domain_id);
 get_logs = () => req(GET_LOGS_API)();
 get_domain_logs = (domain_id) => req(GET_LOGS_API)(domain_id);
 
+get_sections = () => req(GET_SECTION_API)();
 get_section = (section_id) => req(GET_SECTION_API)(section_id);
 get_section_tree = (section_id) => req(GET_SECTION_TREE_API)(section_id);
 
+get_nodes = () => req(GET_NODE_API)();
 get_node = (node_id) => req(GET_NODE_API)(node_id);
 get_materials = (node_id) => req(GET_MATERIALS_API)(node_id);

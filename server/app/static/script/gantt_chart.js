@@ -1,7 +1,5 @@
 var data = [];
 // var startTime = +new Date();
-var categories = ['Python', 'C', '编码']
-
 
 function leading_zero(string){
     return string.length < 2 ? '0' + string : string;
@@ -72,7 +70,7 @@ function renderItem(params, api) {
 }
 
 
-function generate_gantt_option(logs) {
+function generate_gantt_option(logs, categories) {
     logs.forEach(function(log){
         console.log(log);
         data.push({
@@ -105,7 +103,7 @@ function generate_gantt_option(logs) {
             }
         },
         title: {
-            text: '所有领域学习记录',
+            text: '学习记录时间线',
             left: 'center'
         },
         dataZoom: [{

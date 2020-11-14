@@ -25,8 +25,17 @@ class UserLearnLogType(Enum):
     REVIEW = 2
 
 
-
+@dataclass
 class User(UserMixin, db.Model):
+    id: int
+    username: str
+    password_hash: str
+    email: str
+    auth: int
+    gender: int
+    avatar_name: str
+    io: str
+
     id            = db.Column(db.Integer, primary_key=True)
     username      = db.Column(db.String(255), index=True, unique=True)
     password_hash = db.Column(db.String(255))
@@ -60,6 +69,7 @@ class User(UserMixin, db.Model):
             return
         return User.query.get(id)
 
+
 @dataclass
 class Domain(db.Model):
     id: int
@@ -75,32 +85,55 @@ class Domain(db.Model):
     color       = db.Column(db.String(255))
 
 
+@dataclass
 class Section(db.Model):
+    id: int
+    domain_id: int
+    name: str
+
     id        = db.Column(db.Integer, primary_key=True)
     domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'), index=True)
     name      = db.Column(db.String(255), index=True)
 
 
+@dataclass
 class Node(db.Model):
+    id: int
+    section_id: int
+    name: str
+
     id         = db.Column(db.Integer, primary_key=True)
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
     name       = db.Column(db.String(255), index=True)
 
 
+@dataclass
 class SectionLink(db.Model):
+    id: int
+    domain_id: int
+    source: int
+    target: int
+
     id        = db.Column(db.Integer, primary_key=True)
     domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'))
     source    = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
     target    = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
 
 
+@dataclass
 class NodeLink(db.Model):
+    id: int
+    section_id: int
+    source: int
+    target: int
+
     id         = db.Column(db.Integer, primary_key=True)
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'))
     source     = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
     target     = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
 
 
+@dataclass
 class Material(db.Model):
     id: int
     node_id: int
@@ -121,8 +154,12 @@ class Material(db.Model):
     average_spent_time = db.Column(db.Interval)
 
 
-
+@dataclass
 class Test(db.Model):
+    id: int
+    node_id: int
+    contributor_id: int
+
     id             = db.Column(db.Integer, primary_key=True)
     node_id        = db.Column(db.Integer)
     contributor_id = db.Column(db.Integer)
@@ -135,6 +172,7 @@ class Record(db.Model):
     mat_id    = db.Column(db.Integer, db.ForeignKey('material.id'), index=True, nullable=True)
     node_id   = db.Column(db.Integer, db.ForeignKey('node.id'), index=True, nullable=True)
     score     = db.Column(db.Integer, index=True)  # -1为学习，>=0为考试
+
 
 
 @dataclass

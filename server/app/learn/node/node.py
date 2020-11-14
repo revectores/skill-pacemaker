@@ -19,6 +19,14 @@ node = Blueprint('node', __name__)
 node_api = Blueprint('node_api', __name__)
 
 
+@node_api.route('/')
+def nodes():
+    query = db.session.query(Node).all()
+    nodes = {node.id: node for node in query}
+    return jsonify(nodes)
+
+
+
 @node.route('/<int:node_id>')
 @login_required
 def node_index(node_id):

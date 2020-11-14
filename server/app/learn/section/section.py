@@ -1,5 +1,6 @@
 import os
 import json
+import dataclasses
 from collections import Counter
 from io import BytesIO
 from time import time, localtime, strftime
@@ -51,6 +52,15 @@ def section_info(section_id):
     }
 
     return jsonify(section)
+
+
+
+@section_api.route('/')
+def sections():
+    query = db.session.query(Section).all()
+    sections = {section.id: section for section in query}
+
+    return jsonify(sections)
 
 
 

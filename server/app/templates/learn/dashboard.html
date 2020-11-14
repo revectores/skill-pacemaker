@@ -62,10 +62,9 @@
 									</p>
 								</div>
 							</div>
+
 							<div class="jumbotron">
-								<h5 align="center">
-									尝试探索更多领域!
-								</h5>
+								<h5 align="center">尝试探索更多领域!</h5>
 								<p align="center">
 									<a class="btn btn-primary btn-large" href="/learn/domain/select">选择新领域</a>
 								</p>
@@ -74,23 +73,15 @@
 
 						<div v-else>
 							<div class="jumbotron">
-								<h5 align="center">
-									似乎没有正在进行中的领域……
-								</h5>
-								<p align="center">
-									为什么不试试呢？
-								</p>
+								<h5 align="center">似乎没有正在进行中的领域……</h5>
+								<p align="center">为什么不试试呢？</p>
 								<p align="center">
 									<a class="btn btn-primary btn-large" href="/learn/domain/select">选择新领域</a>
 								</p>
 							</div>
 						</div>
 
-
-						<h5>
-							已经完成的领域
-						</h5>
-
+						<h5>已经完成的领域</h5>
 						<div v-if="Object.keys(completed_domains).length">
 							<div v-for="user_domain in completed_domains">
 								<div class="jumbotron">
@@ -108,42 +99,36 @@
 							</div>
 						</div>
 
-						<h5>
-							最近的学习记录
-						</h5>
-						{%if not recs%}
-						<div class="jumbotron">
-							<h5 align="center">
-								学习记录找不到了。
-							</h5>
-						</div>
-						{%else%}
+						<h5>最近的学习记录</h5>
+						<div v-if="logs.length">
 							<table class="table">
 							<thead>
 								<tr>
-							   		<th>时间</th>
+							   		<th>时间段</th>
 									<th>领域</th>
-									<th>知识点</th>
-									<th>学习内容</th>   
+									<th></th>
+									<th></th>   
 								</tr>
 							 </thead>
 							 <tbody>
-							{%for rec in recs%}
-								<tr>
-									{%for i in range(4)%}
-										<td>{{rec[i]}}</td>
-									{%endfor%}
+							 	<tr v-for="log in logs">
+							 		<td><% log.start %> ~ <% log.end %></td>
+									<td><% domains[log.domain_id].name %> /
+										<% sections[log.section_id].name %> /
+										<% nodes[log.node_id].name %></td>
+									<td></td>
+									<td></td>
 								</tr>
-							{%endfor%}
 							</tbody>
 							</table>
-						{%endif%}
+						</div>
+						<div v-else class="jumbotron">
+							<h5 align="center">还没有学习记录</h5>
+						</div>
 
-						<h5>
-							学习记录
-						</h5>
-		
 				        <div id="time_range" style="height:500px;"></div>
+				        <div id="tree_chart" style="height:500px;"></div>
+				        <!--<div id="treemap_chart" style="height:500px;"></div>-->
 					</div>
 					<div class="col-md-1"></div>
 				</div>
@@ -158,6 +143,8 @@
 <script src="/static/script/vue.min.js"></script>
 
 <script src="/static/script/gantt_chart.js"></script>
+<script src="/static/script/tree_chart.js"></script>
+
 <script src="/static/script/req.js"></script>
 <script src="/static/script/api.js"></script>
 
@@ -167,11 +154,16 @@
 	const PRETESTED = 2;
 	const COMPLETED = 3;
 
+	var domains = [];
+	var sections = [];
+	var domain2sections = {};
 
     var app = new Vue({
         el: '#app',
         data: {
         	domains: {},
+        	sections: {},
+        	nodes: {},
         	running_domains: {},
         	completed_domains: {},
         	logs: {}
@@ -182,8 +174,11 @@
         },
         created: function() {
         	this.domains = JSON.parse(get_user_domains());
+        	this.sections = JSON.parse(get_sections());
+        	this.nodes = JSON.parse(get_nodes());
         	this.logs = JSON.parse(get_logs());
-        	console.log('log', this.logs);
+
+        	console.log(this.sections);
 
         	for (const id in this.domains) {
         		if ((this.domains[id].state == SELECTED) || (this.domains[id].state == PRETESTED)){
@@ -193,14 +188,52 @@
         			this.completed_domains[id] = this.domains[id];
         		}
         	}
+
+        	domains = Object.keys(this.domains);
+        	sections = Object.keys(this.sections);
+        	domain_names = [];
+        	section_names = [];
+
+        	for (const id in this.domains) {
+        		domain_names.push(this.domains[id].name);
+        	}
+        	for (const id in this.sections) {
+        		section_names.push(this.sections[id].name);
+        	}
+
+        	for (const section_id in this.sections) {
+        		domain_id = this.sections[section_id].domain_id;
+        		domain_name = this.domains[domain_id].name;
+        		section_name = this.sections[section_id].name;
+
+        		if (!(domain_name in domain2sections)) {
+        			domain2sections[domain_name] = []
+        		}
+        		domain2sections[domain_name].push(section_name)
+        	}
         },
 		 delimiters: ["<%", "%>"]
  
     });
 
+    // let treemap_chart = echarts.init(document.getElementById('treemap_chart'));
 	let time_range_chart = echarts.init(document.getElementById('time_range'));
-	time_range_chart.setOption(option = generate_gantt_option(app.logs));
+	let tree_chart = echarts.init(document.getElementById('tree_chart'));
 
+    time_range_chart.setOption(option = generate_gantt_option(app.logs, domain_names));
+
+    intervals = [];
+    app.logs.forEach((log) => {
+    	intervals.push({
+    		'type_name': 		app.domains[log.domain_id].name,
+    		'subtype_name': 	app.sections[log.section_id].name,
+    		'start': 			new Date(log.start),
+    		'end': 				new Date(log.end)
+    	})
+    });
+
+    tree_chart.setOption(option = get_tree_chart(intervals, domain_names, section_names, domain2sections));
 </script>
+<!--<script src="/static/script/treemap_chart.js"></script>-->
 
 </html>
