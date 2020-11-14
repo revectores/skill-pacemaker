@@ -11,9 +11,9 @@ def db_init():
 
 	domains = [
 	    # Domain(id=1, name="测试领域", description="测试领域", tree_file="test.tree"),
-	    Domain(id=1, name="Python", description="Python变量、函数、数据结构、流程控制、面向对象机制", node_count=17),
-	    Domain(id=2, name="C", description="C变量、函数、流程控制", node_count=20),
-	    Domain(id=3, name="编码", description="整数、浮点数、字符的编码方式", node_count=4)
+	    Domain(id=1, name="Python", description="Python变量、函数、数据结构、流程控制、面向对象机制", node_count=17, color='rgba(191, 122, 219, 1)'),
+	    Domain(id=2, name="C", description="C变量、函数、流程控制", node_count=20, color='rgba(21, 93, 246, 1)'),
+	    Domain(id=3, name="编码", description="整数、浮点数、字符的编码方式", node_count=4, color='rgba(113, 249, 253, 1)')
 	]
 
 	sections = [
@@ -110,7 +110,13 @@ def db_init():
 		Test(id=2, node_id=1, contributor_id=0),
 	]
 
-	records_list = [users, domains, sections, nodes, section_links, node_links, user_domains, user_nodes, materials, tests]
+	user_learn_logs = [
+		UserLearnLog(id=1, type=0, user_id=1, domain_id=3, section_id=8, node_id=18, start=datetime(year=2020, month=11, day=14, hour=2), end=datetime(year=2020, month=11, day=14, hour=4)),
+		UserLearnLog(id=2, type=0, user_id=1, domain_id=3, section_id=9, node_id=19, start=datetime(year=2020, month=11, day=14, hour=7), end=datetime(year=2020, month=11, day=14, hour=11)),
+		UserLearnLog(id=3, type=0, user_id=1, domain_id=3, section_id=10, node_id=20, start=datetime(year=2020, month=11, day=14, hour=14), end=datetime(year=2020, month=11, day=14, hour=17))
+	]
+
+	records_list = [users, domains, sections, nodes, section_links, node_links, user_domains, user_nodes, materials, tests, user_learn_logs]
 	for records in records_list:
 		db.session.bulk_save_objects(records)
 

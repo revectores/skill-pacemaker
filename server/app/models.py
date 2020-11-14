@@ -19,6 +19,12 @@ class DomainState(Enum):
     COMPLETED  = 3
 
 
+class UserLearnLogType(Enum):
+    LEARN  = 0
+    TEST   = 1
+    REVIEW = 2
+
+
 
 class User(UserMixin, db.Model):
     id            = db.Column(db.Integer, primary_key=True)
@@ -60,11 +66,13 @@ class Domain(db.Model):
     name: str
     description: str
     node_count: int
+    color: str
 
     id          = db.Column(db.Integer, primary_key=True)
     name        = db.Column(db.String(20))
     description = db.Column(db.String(255), nullable=True)
     node_count  = db.Column(db.Integer, default=0)
+    color       = db.Column(db.String(255))
 
 
 class Section(db.Model):
@@ -170,7 +178,18 @@ class UserTest(db.Model):
     test_id = db.Column(db.Integer, db.ForeignKey('test.id'))
 
 
+@dataclass
 class UserLearnLog(db.Model):
+    id: int
+    type: int
+    user_id: int
+    domain_id: int
+    section_id: int
+    node_id: int
+    material_id: int
+    start: datetime
+    end: datetime
+
     id          = db.Column(db.Integer, primary_key=True)
     type        = db.Column(db.Integer)    # 0 for learn, 1 for test
     user_id     = db.Column(db.Integer)

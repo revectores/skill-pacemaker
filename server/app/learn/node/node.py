@@ -31,13 +31,15 @@ def node_index(node_id):
 @node_api.route('/<int:node_id>')
 @login_required
 def node_info(node_id):
-	query = db.session.query(Domain, Section, Node).\
+	query = db.session.query(Domain, Section, Node, UserDomain).\
 			filter(Node.id == node_id).\
 			filter(Node.section_id == Section.id).\
 			filter(Section.domain_id == Domain.id).\
+			filter(UserDomain.domain_id == Domain.id).\
+			filter(UserDomain.user_id == current_user.id).\
 			first_or_404()
 
-	domain, section, node_ = query
+	domain, section, node_, user_domain = query
 
 	node = {
 		'id':			node_.id,
@@ -46,7 +48,8 @@ def node_info(node_id):
 		'section_id':	section.id,
 		'section_name': section.name,
 		'domain_id':	domain.id,
-		'domain_name':	domain.name
+		'domain_name':	domain.name,
+		'domain_state': user_domain.state.value
 	}
 
 	return jsonify(node)

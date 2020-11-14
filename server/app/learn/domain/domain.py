@@ -11,8 +11,8 @@ from flask_login import login_required, current_user, login_user, logout_user
 
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
-from app.models import DomainState
-from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, UserDomain, UserNode
+from app.models import DomainState, UserLearnLogType
+from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, UserDomain, UserNode, UserLearnLog
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend, get_nodes_coordinates
 from app.learn.node.node import node_index
 
@@ -278,3 +278,29 @@ def get_next(node_id):
 def domain_test(name):
     return redirect('/learn/domain/learn/next/' + str(Node.query.filter_by(name=name).first_or_404().id))
     # return render_template('domain_test.html', node = Node.query.filter_by(name = name).first_or_404())
+
+
+
+
+@domain_api.route('/log')
+@login_required
+def domain_logs():
+    query = UserLearnLog.query.\
+            filter_by(user_id=current_user.id).\
+            all()
+
+    return jsonify(query)
+
+
+
+@domain_api.route('/log/<int:domain_id>')
+@login_required
+def domain_log(domain_id):
+    query = UserLearnLog.query.\
+            filter_by(user_id=current_user.id).\
+            filter_by(domain_id=domain_id).\
+            all()
+
+    return jsonify(query)
+
+

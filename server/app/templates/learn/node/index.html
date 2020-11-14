@@ -62,20 +62,46 @@
                                 </footer>
                             </blockquote>
 
-                            <a href="/learn/node/material/1">
-                                <button type="button" class="btn btn-md btn-primary btn-block">开始学习</button>
-                            </a>
-                            <br/>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <a v-bind:href="'/learn/node/materials/' + node_id">
-                                        <button type="button" class="btn btn-success btn-block">选择学习材料</button>
-                                    </a>
+                            <div v-if="node.domain_state < 3">
+                                <a href="/learn/node/material/1">
+                                    <button type="button" class="btn btn-md btn-primary btn-block">开始学习</button>
+                                </a>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a v-bind:href="'/learn/node/materials/' + node_id">
+                                            <button type="button" class="btn btn-success btn-block">选择学习材料</button>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="/community">
+                                            <button type="button" class="btn btn-success btn-block">去社区提问</button>
+                                        </a>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <a href="/community">
-                                        <button type="button" class="btn btn-success btn-block">去社区提问</button>
-                                    </a>
+                            </div>
+
+                            <div v-else-if="node.domain_state == 3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a href=""><button type="button" class="btn btn-md btn-primary btn-block">上传学习材料</button></a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href=""><button type="button" class="btn btn-md btn-primary btn-block">上传测试材料</button></a>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a v-bind:href="'/learn/node/materials/' + node_id">
+                                            <button type="button" class="btn btn-success btn-block">查看学习材料</button>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="/community">
+                                            <button type="button" class="btn btn-success btn-block">去社区提问</button>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

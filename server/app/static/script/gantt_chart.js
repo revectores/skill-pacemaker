@@ -2,11 +2,6 @@ var data = [];
 // var startTime = +new Date();
 var categories = ['Python', 'C', '编码']
 
-var types = [
-    {name: 'Python', color: 'rgba(191, 122, 219, 1)'},
-    {name: 'C', color: 'rgba(21, 93, 246, 1)'},
-    {name: '编码', color: 'rgba(113, 249, 253, 1)'},
-];
 
 function leading_zero(string){
     return string.length < 2 ? '0' + string : string;
@@ -25,40 +20,6 @@ function seconds_to_hms(seconds){
     return duration_string;
 }
 
-time_ranges = [
-  {
-    "end": 1592644908000,
-    "id": 2020060200,
-    "start": 1592644538000,
-    "type_index": 1
-  },
-  {
-    "end": 1592655166000,
-    "id": 2020060201,
-    "start": 1592652985000,
-    "type_index": 1
-  },
-]
-
-
-time_ranges.forEach(function(range){
-    data.push({
-        name: types[range.type_index].name,
-        value: [
-            range.type_index,
-            new Date(range.start),
-            new Date(range.end),
-            (range.end - range.start)/1000,
-            range.id
-            // range.subtype_index
-        ],
-        itemStyle: {
-            normal: {
-                color: types[range.type_index].color
-            }
-        }
-    })
-});
 
 /*
 echarts.util.each(categories, function (category, index) {
@@ -111,19 +72,40 @@ function renderItem(params, api) {
 }
 
 
-function get_gantt_option() {
+function generate_gantt_option(logs) {
+    logs.forEach(function(log){
+        console.log(log);
+        data.push({
+            name: log.domain_id,
+            value: [
+                log.domain_id - 1,
+                new Date(log.start),
+                new Date(log.end),
+                (new Date(log.end) - new Date(log.start))/1000,
+                log.id
+                // range.subtype_index
+            ],
+            /*
+            itemStyle: {
+                normal: {
+                    color: log.color
+                }
+            }*/
+        })
+    });
+
     option = {
         tooltip: {
-            formatter: function (params){
-                let total_seconds = params.value[3];
+            formatter: function (log_data){
+                let total_seconds = log_data.value[3];
                 let hms = seconds_to_hms(total_seconds);
                 // subtype_name = subtypes[params.value[5]];
 
-                return `${params.marker}${params.name}/${subtype_name}: ${duration_string}`;
+                return `${log_data.marker}${log_data.name}: ${hms}`;
             }
         },
         title: {
-            text: 'Intervals in 2020-06-20',
+            text: '所有领域学习记录',
             left: 'center'
         },
         dataZoom: [{
@@ -151,8 +133,8 @@ function get_gantt_option() {
             height: 300
         },
         xAxis: {
-            min: new Date('2020-06-20T00:00:00'),
-            max: new Date('2020-06-21T00:00:00'),
+            min: new Date('2020-11-14T00:00:00'),
+            max: new Date('2020-11-15T00:00:00'),
             type: 'time',
             scale: true,
             axisLabel: {

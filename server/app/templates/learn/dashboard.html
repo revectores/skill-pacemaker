@@ -167,12 +167,14 @@
 	const PRETESTED = 2;
 	const COMPLETED = 3;
 
+
     var app = new Vue({
         el: '#app',
         data: {
         	domains: {},
         	running_domains: {},
-        	completed_domains: {}
+        	completed_domains: {},
+        	logs: {}
         },
         methods: {
         },
@@ -180,7 +182,9 @@
         },
         created: function() {
         	this.domains = JSON.parse(get_user_domains());
-        	console.log(this.domains);
+        	this.logs = JSON.parse(get_logs());
+        	console.log('log', this.logs);
+
         	for (const id in this.domains) {
         		if ((this.domains[id].state == SELECTED) || (this.domains[id].state == PRETESTED)){
         			this.running_domains[id] = this.domains[id];
@@ -189,15 +193,14 @@
         			this.completed_domains[id] = this.domains[id];
         		}
         	}
-
-        	console.log(this.user_domains);
         },
 		 delimiters: ["<%", "%>"]
  
     });
 
-	var time_range_chart = echarts.init(document.getElementById('time_range'));
-    time_range_chart.setOption(option = get_gantt_option());
+	let time_range_chart = echarts.init(document.getElementById('time_range'));
+	time_range_chart.setOption(option = generate_gantt_option(app.logs));
+
 </script>
 
 </html>
