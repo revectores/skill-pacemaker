@@ -8,7 +8,7 @@ from flask import render_template, redirect, flash, url_for, request, session, m
 from flask_login import login_required, current_user, login_user, logout_user
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm,EditorForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm,EditorForm,MaterialForm
 from app.models import User, Domain, Material, Record, Node
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend
 
@@ -32,3 +32,15 @@ def community_new():
 def community_thread(tid):
     form = EditorForm()
     return render_template('community/thread.html',form = form)
+
+@community.route('/new_material')
+@login_required
+def mat_new():
+    form = MaterialForm()
+    return render_template('community/new_material.html', uid='Edwin Sha',form = form)
+
+@community.route('/new_test')
+@login_required
+def test_new():
+    form = MaterialForm()
+    return render_template('community/new_test.html', uid='Edwin Sha',form = form)
