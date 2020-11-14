@@ -6,8 +6,18 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import login
 import re, jwt
 from time import time
+from datetime import datetime, timedelta
 from config import Config
 from dataclasses import dataclass
+from enum import Enum
+
+
+class DomainState(Enum):
+    UNSELECTED = 0
+    SELECTED   = 1
+    PRETESTED  = 2
+    COMPLETED  = 3
+
 
 
 class User(UserMixin, db.Model):
@@ -28,8 +38,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def get_registration_token(self, expires_in=6000):
-        return jwt.encode(
-            {
+        return jwt.encode({
                 'registration': self.id,
                 'exp': time() + expires_in
             },
@@ -40,8 +49,7 @@ class User(UserMixin, db.Model):
     @staticmethod
     def verify_registration_token(token):
         try:
-            id = jwt.decode(token, Config.SECRET_KEY,
-                            algorithms=['HS256'])['registration']
+            id = jwt.decode(token, Config.SECRET_KEY, algorithms=['HS256'])['registration']
         except:
             return
         return User.query.get(id)
@@ -60,48 +68,56 @@ class Domain(db.Model):
 
 
 class Section(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id        = db.Column(db.Integer, primary_key=True)
     domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'), index=True)
-    name = db.Column(db.String(255), index=True)
+    name      = db.Column(db.String(255), index=True)
 
 
 class Node(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id         = db.Column(db.Integer, primary_key=True)
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
-    name = db.Column(db.String(255), index=True)
+    name       = db.Column(db.String(255), index=True)
 
 
 class SectionLink(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id        = db.Column(db.Integer, primary_key=True)
     domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'))
-    source = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
-    target = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
+    source    = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
+    target    = db.Column(db.Integer, db.ForeignKey('section.id'), index=True)
 
 
 class NodeLink(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id         = db.Column(db.Integer, primary_key=True)
     section_id = db.Column(db.Integer, db.ForeignKey('section.id'))
-    source = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
-    target = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
+    source     = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
+    target     = db.Column(db.Integer, db.ForeignKey('node.id'), index=True)
 
 
-class Read(db.Model):
+class Material(db.Model):
+    id: int
+    node_id: int
+    contributor_id: int
+    description: str
+    reader_count: int
+    length: int
+    score: int
+    average_spent_time: timedelta
+
     id             = db.Column(db.Integer, primary_key=True)
     node_id        = db.Column(db.Integer)
     contributor_id = db.Column(db.Integer)
+    description    = db.Column(db.String(255))
+    reader_count   = db.Column(db.Integer)
+    length         = db.Column(db.Integer)
+    score          = db.Column(db.Integer)
+    average_spent_time = db.Column(db.Interval)
+
 
 
 class Test(db.Model):
     id             = db.Column(db.Integer, primary_key=True)
     node_id        = db.Column(db.Integer)
     contributor_id = db.Column(db.Integer)
-
-
-class Material(db.Model):
-    id            = db.Column(db.Integer, primary_key=True)
-    node          = db.Column(db.Integer, db.ForeignKey('node.id'), nullable=True, index=True)
-    material_file = db.Column(db.String(255), nullable=True)
-    creator_id    = db.Column(db.Integer, nullable=True, index=True)
 
 
 class Record(db.Model):
@@ -118,15 +134,13 @@ class UserDomain(db.Model):
     id: int
     user_id: int
     domain_id: int
-    selected: bool
-    pretest: bool
+    state: int
     mastered_node_count: id
 
     id                  = db.Column(db.Integer, primary_key=True)
     user_id             = db.Column(db.Integer, db.ForeignKey('user.id'))
     domain_id           = db.Column(db.Integer, db.ForeignKey('domain.id'))
-    selected            = db.Column(db.Boolean, default=False)
-    pretest             = db.Column(db.Boolean, default=False)
+    state               = db.Column(db.Enum(DomainState), default=DomainState.UNSELECTED)
     mastered_node_count = db.Column(db.Integer, default=0)
 
 
@@ -144,10 +158,10 @@ class UserNode(db.Model):
     mastered = db.Column(db.Boolean)
 
 
-class UserRead(db.Model):
-    id      = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    read_id = db.Column(db.Integer, db.ForeignKey('read.id'))
+class UserMaterial(db.Model):
+    id          = db.Column(db.Integer, primary_key=True)
+    user_id     = db.Column(db.Integer, db.ForeignKey('user.id'))
+    material_id = db.Column(db.Integer, db.ForeignKey('material.id'))
 
 
 class UserTest(db.Model):

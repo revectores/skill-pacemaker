@@ -12,8 +12,8 @@ def db_init():
 	domains = [
 	    # Domain(id=1, name="测试领域", description="测试领域", tree_file="test.tree"),
 	    Domain(id=1, name="Python", description="Python变量、函数、数据结构、流程控制、面向对象机制", node_count=17),
-	    Domain(id=2, name="C", description="C变量、函数、流程控制"),
-	    Domain(id=3, name="编码", description="整数、浮点数、字符的编码方式") 
+	    Domain(id=2, name="C", description="C变量、函数、流程控制", node_count=20),
+	    Domain(id=3, name="编码", description="整数、浮点数、字符的编码方式", node_count=4)
 	]
 
 	sections = [
@@ -23,8 +23,11 @@ def db_init():
 	    Section(id=4, domain_id=1, name="flow_control"),
 	    Section(id=5, domain_id=1, name="native_datatype"),
 	    Section(id=6, domain_id=1, name="module"),
-	    Section(id=7, domain_id=1, name="oop")
-	    # Section(domain_id=3, name="")
+	    Section(id=7, domain_id=1, name="oop"),
+	    
+	    Section(id=8, domain_id=3, name="integer_coding"),
+	    Section(id=9, domain_id=3, name="float_encoding"),
+	    Section(id=10, domain_id=3, name="character_encoding")
 	]
 
 	section_links = [
@@ -37,6 +40,9 @@ def db_init():
 	    SectionLink(domain_id=1, source=3, target=6),
 	    SectionLink(domain_id=1, source=3, target=7),
 	    SectionLink(domain_id=1, source=5, target=7),
+
+	    SectionLink(domain_id=3, source=8, target=9),
+	    SectionLink(domain_id=3, source=8, target=10),
 	]
 
 	nodes = [
@@ -56,7 +62,12 @@ def db_init():
 	    Node(id=14, section_id=5, name="dictionary"),
 	    Node(id=15, section_id=6, name="import_module"),
 	    Node(id=16, section_id=6, name="build_module"),
-	    Node(id=17, section_id=7, name="class_intro")
+	    Node(id=17, section_id=7, name="class_intro"),
+
+	    Node(id=18, section_id=8, name="integer_coding"),
+	    Node(id=19, section_id=9, name="IEEE754"),
+	    Node(id=20, section_id=10, name="ASCII"),
+	    Node(id=21, section_id=10, name="Unicode"),
 	]
 
 	node_links = [
@@ -69,24 +80,29 @@ def db_init():
 		NodeLink(section_id=5, source=11, target=12),
 		NodeLink(section_id=5, source=12, target=13),
 		NodeLink(section_id=5, source=12, target=14),
-		NodeLink(section_id=6, source=15, target=16)
+		NodeLink(section_id=6, source=15, target=16),
+
+		NodeLink(section_id=10, source=20, target=21)
 	]
 
 	user_domains = [
-		UserDomain(user_id=1, domain_id=1, pretest=False, mastered_node_count=7),
-		UserDomain(user_id=1, domain_id=2, pretest=False, mastered_node_count=0)
+		UserDomain(user_id=1, domain_id=1, mastered_node_count=2),
+		UserDomain(user_id=1, domain_id=2, mastered_node_count=0),
+		UserDomain(user_id=1, domain_id=3, state=DomainState.COMPLETED, mastered_node_count=4)
 	]
 
 
-	user_nodes = [UserNode(user_id=1, node_id=node_id, mastered=False) for node_id in range(18)]
-	print(user_nodes[2].node_id)
-	print(user_nodes[3].node_id)
+	user_nodes = [UserNode(user_id=1, node_id=node_id, mastered=False) for node_id in range(22)]
 	user_nodes[2].mastered = True
 	user_nodes[3].mastered = True
+	user_nodes[17].mastered = True
+	user_nodes[18].mastered = True
+	user_nodes[19].mastered = True
+	user_nodes[20].mastered = True
 
-	reads = [
-		Read(id=1, node_id=1, contributor_id=0),
-		Read(id=2, node_id=1, contributor_id=0),
+	materials = [
+		Material(id=1, node_id=1, contributor_id=0),
+		Material(id=2, node_id=1, contributor_id=0),
 	]
 
 	tests = [
@@ -94,7 +110,7 @@ def db_init():
 		Test(id=2, node_id=1, contributor_id=0),
 	]
 
-	records_list = [users, domains, sections, nodes, section_links, node_links, user_domains, user_nodes, reads, tests]
+	records_list = [users, domains, sections, nodes, section_links, node_links, user_domains, user_nodes, materials, tests]
 	for records in records_list:
 		db.session.bulk_save_objects(records)
 

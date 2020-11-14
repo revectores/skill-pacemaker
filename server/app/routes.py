@@ -13,9 +13,9 @@ from app.models import User, Domain, Material, Record, Node
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend
 
 from app.user.user import user
-from app.learn.domain.domain import domain
-from app.learn.section.section import section
-from app.learn.node.node import node
+from app.learn.domain.domain import domain, domain_api
+from app.learn.section.section import section, section_api
+from app.learn.node.node import node, node_api
 from app.community.community import community
 
 app.register_blueprint(user, url_prefix='/user')
@@ -23,6 +23,12 @@ app.register_blueprint(domain, url_prefix='/learn/domain')
 app.register_blueprint(section, url_prefix='/learn/section')
 app.register_blueprint(node, url_prefix='/learn/node')
 app.register_blueprint(community, url_prefix='/community')
+
+# app.register_blueprint(user_api, url_prefix='/api/user')
+app.register_blueprint(domain_api, url_prefix='/api/learn/domain')
+app.register_blueprint(section_api, url_prefix='/api/learn/section')
+app.register_blueprint(node_api, url_prefix='/api/learn/node')
+# app.register_blueprint(community_api, url_prefix='/api/community')
 
 
 @app.route('/')

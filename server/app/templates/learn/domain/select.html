@@ -41,7 +41,8 @@
                         </div>
                     </li>
                 </ul>
-                <div class="row">
+
+                <div id="app" class="row">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
                     <div class="pagh-header"></div>
@@ -55,40 +56,37 @@
                         </p>
                     </div>
 
-                    <div class="row">
-
-                        {%for domain in domains%}
-                        <div class="col-md-6">
-                            <div class="jumbotron">
-                                <h2 align="center">
-                                    {{ domain.name }}
-                                </h2>
-                                <p align="center">
-                                    {{ domain.description }}
-                                </p>
-                                <a href="/learn/domain/{{ domain.id }}">
-                                    <button type="button" class="btn btn-md btn-primary btn-block">
+                        <div class="row">
+                            <div v-for="new_domain in new_domains" class="col-md-6">
+                                <div class="jumbotron">
+                                    <h2 align="center">
+                                        <% new_domain.name %>
+                                    </h2>
+                                    <p align="center">
+                                        <% new_domain.description %>
+                                    </p>
+                                    <a v-bind:href="'/learn/domain/' + new_domain.domain_id">
+                                        <button type="button" class="btn btn-md btn-primary btn-block">
                                             进入领域
-                                    </button>
-                                </a>
+                                        </button>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                        {%endfor%}
 
-                        <div class="col-md-6">
-                            <div class="jumbotron">
-                                <h2 align="center">
-                                    更多领域
-                                </h2>
-                                <p align="center">
-                                    正在开发中……
-                                </p>
-                                <button type="button" class="btn btn-md btn-secondary disabled btn-block">
-                                    进入领域
-                                </button>
+                            <div class="col-md-6">
+                                <div class="jumbotron">
+                                    <h2 align="center">
+                                        更多领域
+                                    </h2>
+                                    <p align="center">
+                                        正在开发中……
+                                    </p>
+                                    <button type="button" class="btn btn-md btn-secondary disabled btn-block">
+                                        进入领域
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        
                     </div>
                 </div>
                 <div class="col-md-1"></div>
@@ -96,8 +94,49 @@
             </div>
         </div>
     </div>
-    </div>
     {{ bootstrap.load_js() }}
 </body>
+
+
+<script src="/static/script/echarts.min.js"></script>
+<script src="/static/script/vue.min.js"></script>
+
+<script src="/static/script/gantt_chart.js"></script>
+<script src="/static/script/req.js"></script>
+<script src="/static/script/api.js"></script>
+
+<script>
+    const UNSELECTED = 0;
+    const SELECTED = 1;
+    const PRETESTED = 2;
+    const COMPLETED = 3;
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            domains: {},
+            new_domains: {},
+            // running_domains: {},
+            // completed_domains: {}
+        },
+        methods: {
+        },
+        filters: {
+        },
+        created: function() {
+            this.domains = JSON.parse(get_user_domains());
+            console.log(this.domains);
+            console.log(Object.keys(this.domains));
+            for (const id in this.domains) {
+                if (this.domains[id].state == UNSELECTED){
+                    this.new_domains[id] = this.domains[id];
+                }
+            }
+        },
+         delimiters: ["<%", "%>"]
+ 
+    });
+
+</script>
 
 </html>

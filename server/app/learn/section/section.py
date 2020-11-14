@@ -11,22 +11,50 @@ from flask_login import login_required, current_user, login_user, logout_user
 
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
+from app.models import DomainState
 from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, UserDomain, UserNode
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend, get_nodes_coordinates
 
 
 section = Blueprint('section', __name__)
+section_api = Blueprint('section_api', __name__)
 
 
 @section.route('/<int:section_id>')
 @login_required
 def section_index(section_id):
-    section = Section.query.filter_by(id=section_id).first_or_404()
-    return render_template('learn/section/index.html', section=section)
+    return render_template('learn/section/index.html')
 
 
 
-@section.route('/tree/<int:section_id>')
+@section_api.route('/<int:section_id>')
+def section_info(section_id):
+    # query = db.session.query(section, usersection).\
+    #         filter(section.id == section_id).\
+    #         filter(section.id == usersection.section.id).\
+    #         filter(usersection.id == current_user.id)
+    # query = Section.query.filter_by(id=section_id).first_or_404()
+
+    query = db.session.query(Domain, Section).\
+            filter(Section.id == section_id).\
+            filter(Domain.id == Section.domain_id).\
+            first_or_404()
+
+    domain, section_ = query
+
+    section = {
+        'id':           section_.id,
+        'section_id':   section_.id,
+        'name':         section_.name,
+        'domain_id':    domain.id,
+        'domain_name':  domain.name
+    }
+
+    return jsonify(section)
+
+
+
+@section_api.route('/tree/<int:section_id>')
 @login_required
 def section_tree(section_id):
     nodes = Node.query.filter_by(section_id=section_id)
@@ -46,11 +74,11 @@ def section_tree(section_id):
     nodes_coordinates = get_nodes_coordinates(node_ids, link_tuples)
     node_graph = {'nodes': [], 'links': []}
 
-    print(domain.id, domain.name, user_domain.pretest)
+    print(domain.id, domain.name)
 
     colors = ['rgb(200, 200, 200)', 'rgb(10, 20, 200)']
     for (node, user_node) in user_nodes:
-        if not user_domain.pretest:
+        if user_domain.state.value == DomainState.UNSELECTED.value:
             color = colors[0]
         elif user_node.mastered:
             color = colors[1]

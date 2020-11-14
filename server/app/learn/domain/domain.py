@@ -11,17 +11,15 @@ from flask_login import login_required, current_user, login_user, logout_user
 
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
+from app.models import DomainState
 from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, UserDomain, UserNode
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend, get_nodes_coordinates
 from app.learn.node.node import node_index
 
 
 domain = Blueprint('domain', __name__)
+domain_api = Blueprint('domain_api', __name__)
 
-
-@app.template_filter('test')
-def tt(t):
-    return t + '11'
 
 
 @app.route('/learn/dashboard')
@@ -58,15 +56,21 @@ def domain_dashboard():
 
 
 
+@domain.route('/<int:domain_id>')
+@login_required
+def domain_index(domain_id):
+    return render_template('learn/domain/index.html')
+
+
+
 @domain.route('/select')
 @login_required
 def domain_select():
-    domains = Domain.query.all()
-    return render_template('learn/domain/select.html', domains=domains)
+    return render_template('learn/domain/select.html')
 
 
-@domain.route('/list')
-@login_required
+
+@domain_api.route('/list')
 def domain_list():
     query = Domain.query.all()
 
@@ -82,48 +86,78 @@ def domain_list():
     return jsonify(domains)
 
 
-@domain.route('/list/user/<int:user_id>')
+
+@domain_api.route('/list/<int:domain_id>')
+def domain_list_one():
+    query = Domain.query.get_or_404(domain_id)
+
+    domain = {
+        'domain_id':    query.id,
+        'name':         query.name,
+        'description':  query.description,
+        'node_count':   query.node_count
+    }
+ 
+    return jsonify(domain)
+
+
+
+@domain_api.route('/user/list')
 @login_required
-def user_domain_list(user_id):
+def user_domain_list():
     query = db.session.query(Domain, UserDomain).\
             filter(Domain.id == UserDomain.id).\
-            filter(UserDomain.user_id == user_id).all()
+            filter(UserDomain.user_id == current_user.id).all()
 
     user_domains = {
         domain.id: {
-            'domain_id':    domain.id,
-            'name':         domain.name,
-            'description':  domain.description,
-            'node_count':   domain.node_count,
-            'user_id':      user_domain.user_id,
-            'selected':     user_domain.selected,
-            'pretest':      user_domain.pretest,
+            'domain_id':           domain.id,
+            'name':                domain.name,
+            'description':         domain.description,
+            'node_count':          domain.node_count,
+            'user_id':             user_domain.user_id,
+            'state':               user_domain.state.value,
             'mastered_node_count': user_domain.mastered_node_count
         }
         for domain, user_domain in query
+        # if user_domain.state.value >= DomainState.SELECTED.value
     }
 
-    # user_domains = [{key: value for (key, value) in dict(r[0].__dict__, **r[1].__dict__).items() if key[0] != '_'} for r in jquery]
     return jsonify(user_domains)
 
 
 
-@domain.route('/<int:domain_id>')
+@domain_api.route('/user/list/<int:domain_id>')
 @login_required
-def domain_index(domain_id):
-    domain = Domain.query.filter_by(id=domain_id).first_or_404()
-    user_domain = UserDomain.query.filter_by(user_id=current_user.id, domain_id=domain_id).first_or_404()
-    return render_template('learn/domain/index.html', domain=domain, user_domain=user_domain, learning=233, finished=2333)
+def user_domain_list_one(domain_id):
+    query = db.session.query(Domain, UserDomain).\
+            filter(Domain.id == domain_id).\
+            filter(UserDomain.user_id == current_user.id).\
+            filter(Domain.id == UserDomain.domain_id).first_or_404()
+
+    domain, user_domain = query
+    user_domain = {
+        'domain_id':    domain.id,
+        'name':         domain.name,
+        'description':  domain.description,
+        'node_count':   domain.node_count,
+        'user_id':      user_domain.user_id,
+        'state':        user_domain.state.value,
+        'mastered_node_count': user_domain.mastered_node_count
+    }
+    return jsonify(user_domain)
+
 
 
 @domain.route('/next/<int:domain_id>')
 @login_required
 def domain_next(domain_id):
-    next_node_id = 7
+    next_node_id = 1
     return redirect(f'/learn/node/{next_node_id}', '302')
 
 
-@domain.route('/tree/<int:domain_id>')
+
+@domain_api.route('/tree/<int:domain_id>')
 @login_required
 def domain_tree(domain_id):
     sections = Section.query.filter_by(domain_id=domain_id)
@@ -161,8 +195,8 @@ def domain_tree(domain_id):
 
 
     for section in sections:
-        # print(user_domain.pretest)
-        if not user_domain.pretest:
+        print(user_domain.state)
+        if user_domain.state.value == DomainState.UNSELECTED.value:
             color = colors[0]
         elif user_section_node_counts[section.id] == 0:
             color = colors[0]
@@ -195,23 +229,22 @@ def domain_tree(domain_id):
 
 
 
-@domain.route('/pretest/submit/<int:domain_id>')
-@login_required
-def pretest_submit(domain_id):
-    user_domain = UserDomain.query.filter_by(user_id=current_user.id, domain_id=domain_id).first_or_404()
-    # print(user_domain)
-    user_domain.pretest = True
-    db.session.commit()
-
-    return ('', 204)
-
-
-
 @domain.route('/pretest/<int:domain_id>')
 @login_required
 def pretest(domain_id):
     domain = Domain.query.filter_by(id=domain_id).first_or_404()
     return render_template('learn/domain/pretest.html', domain=domain)
+
+
+
+@domain.route('/pretest/submit/<int:domain_id>')
+@login_required
+def pretest_submit(domain_id):
+    user_domain = UserDomain.query.filter_by(user_id=current_user.id, domain_id=domain_id).first_or_404()
+    user_domain.state = DomainState.PRETESTED
+    db.session.commit()
+
+    return ('', 204)
 
 
 

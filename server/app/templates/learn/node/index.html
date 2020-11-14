@@ -47,41 +47,38 @@
                         <br>
                         <div class="jumbotron">
                             <h2 align="center">
-                                <% user_domain.name %>
+                                <% node.domain_name %>  / <% node.section_name %> / <% node.name %>
                             </h2>
                             <br>
                             <p align="center">
-                                <% user_domain.description %>
+                                <% node.description %>
                             </p>
                             <blockquote class="blockquote">
                                 <p class="mb-0">
                                     无数的学习者与你同行。
                                 </p>
                                 <footer class="blockquote-footer">
-                                    正在学习：<% user_domain.learning_count %> 已经学完：<% user_domain.finished_count %>
+                                    正在学习：<% node.learning_count %> 已经学完：<% node.finished_count %>
                                 </footer>
                             </blockquote>
 
-                            <div v-if="user_domain.state == 2">
-                                <a v-bind:href=" '/learn/domain/next/' + user_domain.domain_id ">
-                                    <button type="button" class="btn btn-md btn-primary btn-block">下一步</button>
-                                </a>
-                            </div>
-                            <div v-else-if="user_domain.state == 1">
-                                <a v-bind:href=" '/learn/domain/pretest/' + user_domain.domain_id ">
-                                    <button type="button" class="btn btn-md btn-primary btn-block">继续覆盖性测试</button>
-                                </a>
-                            </div>
-                            <div v-else-if="user_domain.state == 0">
-                                <a v-bind:href=" '/learn/domain/pretest/' + user_domain.domain_id ">
-                                    <button type="button" class="btn btn-md btn-primary btn-block">开始覆盖性测试</button>
-                                </a>
+                            <a href="/learn/node/material/1">
+                                <button type="button" class="btn btn-md btn-primary btn-block">开始学习</button>
+                            </a>
+                            <br/>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a v-bind:href="'/learn/node/materials/' + node_id">
+                                        <button type="button" class="btn btn-success btn-block">选择学习材料</button>
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="/community">
+                                        <button type="button" class="btn btn-success btn-block">去社区提问</button>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                        <h5>
-                            知识树形图
-                        </h5>
-                        <div id="knowledge_tree_chart" style="width:100%; height:500px;"></div>
                     </div>
                     <div class="col-md-1"></div>
                 </div>
@@ -99,29 +96,20 @@
 <script src="/static/script/utils.js"></script>
 <script src="/static/script/tree.js"></script>
 <script>
-    let domain_id = window.location.href.split('/').pop();
-
     var app = new Vue({
         el: '#app',
         data: {
-            domain_id: domain_id,
-            user_domain: {}
+            node_id: window.location.href.split('/').pop(),
+            node: {}
         },
         methods: {
         },
         filters: {
         },
         created: function() {
-            this.user_domain = JSON.parse(get_user_domain(this.domain_id));
+            this.node = JSON.parse(get_node(this.node_id));
         },
         delimiters: ["<%", "%>"]
-    });
-
-    let knowledge_tree_chart = echarts.init(document.getElementById('knowledge_tree_chart'));
-    let tree = JSON.parse(get_domain_tree(domain_id));
-    knowledge_tree_chart.setOption(option=get_knowledge_tree_option(tree));
-    knowledge_tree_chart.on('click', function (params) {
-        window.open('/learn/section/' + params.data['id'], '_self');
     });
 </script>
 </html>

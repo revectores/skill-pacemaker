@@ -47,12 +47,12 @@
 				<div class="row">
 					<div class="col-md-1"></div>
 					<div class="col-md-10">
+
 						<h5>
 							进行中的领域
 						</h5>
-
-						<div v-if="user_domains">
-							<div v-for="user_domain in user_domains">
+						<div v-if="Object.keys(running_domains).length">
+							<div v-for="user_domain in running_domains">
 								<div class="jumbotron">
 									<h3 align="center"><% user_domain.name %></h3>
 									<p align="center"><% user_domain.description %></p>
@@ -70,6 +70,7 @@
 									<a class="btn btn-primary btn-large" href="/learn/domain/select">选择新领域</a>
 								</p>
 							</div>
+						</div>
 
 						<div v-else>
 							<div class="jumbotron">
@@ -85,18 +86,28 @@
 							</div>
 						</div>
 
-						<h5>
-							荣誉殿堂
-						</h5>
-						{%if not finished_doms%}
-						<div class="jumbotron">
-							<h5 align="center">
-								没有荣誉是荣誉的起点。
-							</h5>
-						</div>
-						{%else%}
 
-						{%endif%}
+						<h5>
+							已经完成的领域
+						</h5>
+
+						<div v-if="Object.keys(completed_domains).length">
+							<div v-for="user_domain in completed_domains">
+								<div class="jumbotron">
+									<h3 align="center"><% user_domain.name %></h3>
+									<p align="center"><% user_domain.description %></p>
+									<p align="center">
+										<a class="btn btn-primary btn-large" v-bind:href="'/learn/domain/' + user_domain.domain_id ">查看领域</a>
+									</p>
+								</div>
+							</div>
+						</div>
+						<div v-else>
+							<div class="jumbotron">
+								<h5 align="center">还没有已经完成学习的领域!</h5>
+							</div>
+						</div>
+
 						<h5>
 							最近的学习记录
 						</h5>
@@ -148,20 +159,37 @@
 
 <script src="/static/script/gantt_chart.js"></script>
 <script src="/static/script/req.js"></script>
-<script src="/static/script/domain.js"></script>
+<script src="/static/script/api.js"></script>
 
 <script>
+	const UNSELECTED = 0;
+	const SELECTED = 1;
+	const PRETESTED = 2;
+	const COMPLETED = 3;
+
     var app = new Vue({
         el: '#app',
         data: {
         	domains: {},
+        	running_domains: {},
+        	completed_domains: {}
         },
         methods: {
         },
         filters: {
         },
         created: function() {
-        	this.user_domains = JSON.parse(get_user_domains(1));
+        	this.domains = JSON.parse(get_user_domains());
+        	console.log(this.domains);
+        	for (const id in this.domains) {
+        		if ((this.domains[id].state == SELECTED) || (this.domains[id].state == PRETESTED)){
+        			this.running_domains[id] = this.domains[id];
+        		}
+        		if (this.domains[id].state == COMPLETED){
+        			this.completed_domains[id] = this.domains[id];
+        		}
+        	}
+
         	console.log(this.user_domains);
         },
 		 delimiters: ["<%", "%>"]

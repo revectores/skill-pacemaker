@@ -11,32 +11,58 @@ from flask_login import login_required, current_user, login_user, logout_user
 
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
-from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, Read, Test, UserDomain, UserNode, UserRead, UserTest
+from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, Material, Test, UserDomain, UserNode, UserMaterial, UserTest
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend, get_nodes_coordinates
 
 
 node = Blueprint('node', __name__)
+node_api = Blueprint('node_api', __name__)
 
 
 @node.route('/<int:node_id>')
 @login_required
 def node_index(node_id):
-	read_id = 1
-	return redirect(f'/learn/node/read/{read_id}', '302')
+	# material_id = 1
+	# return redirect(f'/learn/node/material/{material_id}', '302')
+
+	return render_template('learn/node/index.html')
 
 
-
-@node.route('/read/<int:read_id>')
+@node_api.route('/<int:node_id>')
 @login_required
-def node_read(read_id):
-	read = Read.query.get_or_404(read_id)
-	node = Node.query.get_or_404(read.node_id)
+def node_info(node_id):
+	query = db.session.query(Domain, Section, Node).\
+			filter(Node.id == node_id).\
+			filter(Node.section_id == Section.id).\
+			filter(Section.domain_id == Domain.id).\
+			first_or_404()
+
+	domain, section, node_ = query
+
+	node = {
+		'id':			node_.id,
+		'node_id':		node_.id,
+		'name':			node_.name,
+		'section_id':	section.id,
+		'section_name': section.name,
+		'domain_id':	domain.id,
+		'domain_name':	domain.name
+	}
+
+	return jsonify(node)
+
+
+@node.route('/material/<int:material_id>')
+@login_required
+def node_material(material_id):
+	material = Material.query.get_or_404(material_id)
+	node = Node.query.get_or_404(material.node_id)
 	section = Section.query.get_or_404(node.section_id)
 	domain = Domain.query.get_or_404(section.domain_id)
 	user_domain = UserDomain.query.get_or_404(section.domain_id)
 
-	read_html_file = open(app.root_path + f"/static/read/{read_id}.html")
-	return render_template('learn/node/read.html', read_html=read_html_file.read(),
+	material_html_file = open(app.root_path + f"/static/material/{material_id}.html")
+	return render_template('learn/node/material.html', material_html=material_html_file.read(),
 						   domain=domain, section=section, node=node, user_domain=user_domain)
 
 
@@ -52,3 +78,39 @@ def node_test(node_id):
 	return render_template('learn/node/test.html',
 						   domain=domain, section=section, node=node, user_domain=user_domain)
 
+
+
+@node.route('/materials/<int:node_id>')
+@login_required
+def html_material_list(node_id):
+	return render_template('learn/node/material_list.html')
+
+
+
+@node_api.route('/materials/<int:node_id>')
+def get_materials(node_id):
+	"""
+	query = db.session.query(Material, UserMaterial).
+			filter_by(Material.node_id == node_id).all()
+			filter_by(UserMaterial.id == current_user.id).\
+			filter_by(Material.id == UserMaterial.material_id).all()
+	"""
+
+	query = Material.query.filter_by(node_id=node_id).all()
+
+	materials = {
+		material.id : {
+			'id':					material.id,
+			'materid_id':			material.id,
+			'node_id':				material.node_id,
+			'contributor_id':		material.contributor_id,
+			'description':			material.description,
+			'reader_count':			material.reader_count,
+			'length':				material.length,
+			'score':				material.score,
+			'average_spent_time':	material.average_spent_time
+		}
+		for material in query
+	} 
+
+	return jsonify(materials)
