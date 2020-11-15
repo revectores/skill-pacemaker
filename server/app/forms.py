@@ -38,3 +38,8 @@ class EditProfileForm(FlaskForm):
 class EditorForm(FlaskForm):
     body = TextAreaField(u'正文', validators=[DataRequired(u'内容不能为空！')])
     submit = SubmitField('提交')
+
+class MaterialForm(FlaskForm):
+    body = TextAreaField(u'正文', validators=[DataRequired(u'内容不能为空！')])
+    file = FileField('文件', validators=[FileAllowed(['md', 'doc','docx'])])
+    submit = SubmitField('提交')
