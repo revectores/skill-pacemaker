@@ -19,6 +19,12 @@ class DomainState(Enum):
     COMPLETED  = 3
 
 
+class MaterialState(Enum):
+    EDITING   = 0 
+    REVIEWING = 1
+    REVIEWED  = 2
+
+
 class UserLearnLogType(Enum):
     LEARN  = 0
     TEST   = 1
@@ -143,15 +149,20 @@ class Material(db.Model):
     length: int
     score: int
     average_spent_time: timedelta
+    reviewer_count: int
 
     id             = db.Column(db.Integer, primary_key=True)
     node_id        = db.Column(db.Integer)
     contributor_id = db.Column(db.Integer)
+    state          = db.Column(db.Enum(MaterialState), default=MaterialState.REVIEWED)
     description    = db.Column(db.String(255))
     reader_count   = db.Column(db.Integer)
     length         = db.Column(db.Integer)
     score          = db.Column(db.Integer)
     average_spent_time = db.Column(db.Interval)
+    reviewer_count = db.Column(db.Integer)
+    vote           = db.Column(db.Integer)
+
 
 
 @dataclass
@@ -163,6 +174,15 @@ class Test(db.Model):
     id             = db.Column(db.Integer, primary_key=True)
     node_id        = db.Column(db.Integer)
     contributor_id = db.Column(db.Integer)
+    state          = db.Column(db.Enum(MaterialState), default=MaterialState.REVIEWED)
+    description    = db.Column(db.String(255))
+    reader_count   = db.Column(db.Integer)
+    length         = db.Column(db.Integer)
+    score          = db.Column(db.Integer)
+    averge_spent_time = db.Column(db.Interval)
+    reviewer_count = db.Column(db.Integer)
+    vote           = db.Column(db.Integer)
+
 
 
 class Record(db.Model):
@@ -190,6 +210,7 @@ class UserDomain(db.Model):
     mastered_node_count = db.Column(db.Integer, default=0)
 
 
+
 class UserSection(db.Model):
     id         = db.Column(db.Integer, primary_key=True)
     user_id    = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -208,6 +229,7 @@ class UserMaterial(db.Model):
     id          = db.Column(db.Integer, primary_key=True)
     user_id     = db.Column(db.Integer, db.ForeignKey('user.id'))
     material_id = db.Column(db.Integer, db.ForeignKey('material.id'))
+
 
 
 class UserTest(db.Model):

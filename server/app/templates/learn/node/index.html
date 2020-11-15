@@ -84,13 +84,22 @@
                             <div v-else-if="node.domain_state == 3">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <a href=""><button type="button" class="btn btn-md btn-primary btn-block">上传学习材料</button></a>
+                                        <a href="/learn/node/material_edit"><button type="button" class="btn btn-md btn-primary btn-block">上传学习材料</button></a>
                                     </div>
                                     <div class="col-md-6">
-                                        <a href=""><button type="button" class="btn btn-md btn-primary btn-block">上传测试材料</button></a>
+                                        <a href="/learn/node/test_edit"><button type="button" class="btn btn-md btn-primary btn-block">上传测试材料</button></a>
                                     </div>
                                 </div>
-                                <br/>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a v-bind:href="'/learn/node/material_review_list/' + node_id"><button type="button" class="btn btn-md btn-primary btn-block">审核学习材料</button></a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a v-bind:href="'/learn/node/test_review_list/' + node_id "><button type="button" class="btn btn-md btn-primary btn-block">审核测试材料</button></a>
+                                    </div>
+                                </div>
+                                <br/><br/><br/>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <a v-bind:href="'/learn/node/materials/' + node_id">

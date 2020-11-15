@@ -141,3 +141,28 @@ def get_materials(node_id):
 	} 
 
 	return jsonify(materials)
+
+
+
+
+@node.route('/material_review')
+def material_review():
+	return render_template('learn/node/material_review.html')
+
+
+
+@node.route('/test_review')
+def test_review():
+	return render_template('learn/node/test_review.html')
+
+
+
+@node.route('/material_review_list/<int:node_id>')
+def material_review_list(node_id):
+	return render_template('learn/node/material_review_list.html')
+
+
+
+@node.route('/test_review_list/<int:node_id>')
+def test_review_list(node_id):
+	return render_template('learn/node/test_review_list.html')
