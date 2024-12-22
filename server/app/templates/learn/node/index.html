@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{ bootstrap.load_css() }}
-    <title>引智——全新在线自适应学习系统</title>
+    <title>引知——全新在线自适应学习系统</title>
     <meta name="author" content="QwQ">
 </head>
 
@@ -16,7 +16,7 @@
             <div class="col-md-12">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/index">引智</a>
+                        <a class="nav-link active" href="/index">引知</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/learn/dashboard">控制台</a>
@@ -84,10 +84,10 @@
                             <div v-else-if="node.domain_state == 3">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <a href="/learn/node/material_edit"><button type="button" class="btn btn-md btn-primary btn-block">上传学习材料</button></a>
+                                        <a href="/learn/node/new_material"><button type="button" class="btn btn-md btn-primary btn-block">上传学习材料</button></a>
                                     </div>
                                     <div class="col-md-6">
-                                        <a href="/learn/node/test_edit"><button type="button" class="btn btn-md btn-primary btn-block">上传测试材料</button></a>
+                                        <a href="/learn/node/new_test"><button type="button" class="btn btn-md btn-primary btn-block">上传测试材料</button></a>
                                     </div>
                                 </div>
                                 <br />
@@ -134,7 +134,7 @@
     var app = new Vue({
         el: '#app',
         data: {
-            node_id: window.location.href.split('/').pop(),
+            node_id: 0,
             node: {}
         },
         methods: {
@@ -142,6 +142,7 @@
         filters: {
         },
         created: function() {
+            this.node_id = window.location.href.split('/').pop();
             this.node = JSON.parse(get_node(this.node_id));
         },
         delimiters: ["<%", "%>"]

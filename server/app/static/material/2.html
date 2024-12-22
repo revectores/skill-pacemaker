@@ -1,0 +1,35 @@
+<h1 id="python-变量">Python 变量</h1>
+<p>变量存储在内存中的值，这就意味着在创建变量时会在内存中开辟一个空间。</p>
+<p>基于变量的数据类型，解释器会分配指定内存，并决定什么数据可以被存储在内存中。</p>
+<p>因此，变量可以指定不同的数据类型，这些变量可以存储整数，小数或字符。</p>
+<hr />
+<h2 id="变量赋值">变量赋值</h2>
+<p>Python 中的变量赋值不需要类型声明。</p>
+<p>每个变量在内存中创建，都包括变量的标识，名称和数据这些信息。</p>
+<p>每个变量在使用前都必须赋值，变量赋值以后该变量才会被创建。</p>
+<p>等号 <strong>=</strong> 用来给变量赋值。</p>
+<p>等号 <strong>=</strong> 运算符左边是一个变量名，等号 <strong>=</strong> 运算符右边是存储在变量中的值。例如：</p>
+<h2 id="实例python-2.0">实例(Python 2.0+)</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="co">#!/usr/bin/python</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="co"># -*- coding: UTF-8 -*-</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>counter <span class="op">=</span> <span class="dv">100</span> <span class="co"># 赋值整型变量</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>miles <span class="op">=</span> <span class="fl">1000.0</span> <span class="co"># 浮点型</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>name <span class="op">=</span> <span class="st">&quot;John&quot;</span> <span class="co"># 字符串</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a> </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a><span class="bu">print</span>(counter)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="bu">print</span>(miles)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a><span class="bu">print</span>(name)</span></code></pre></div>
+<p>以上实例中，100，1000.0和“John”分别赋值给counter，miles，name变量。</p>
+<p>执行以上程序会输出如下结果：</p>
+<pre><code>100
+1000.0
+John</code></pre>
+<hr />
+<h2 id="多个变量赋值">多个变量赋值</h2>
+<p>Python允许你同时为多个变量赋值。例如：</p>
+<pre><code>a = b = c = 1</code></pre>
+<p>以上实例，创建一个整型对象，值为1，三个变量被分配到相同的内存空间上。</p>
+<p>您也可以为多个对象指定多个变量。例如：</p>
+<pre><code>a, b, c = 1, 2, &quot;john&quot;</code></pre>
+<p>以上实例，两个整型对象 1 和 2 分别分配给变量 a 和 b，字符串对象 “john” 分配给变量 c。</p>

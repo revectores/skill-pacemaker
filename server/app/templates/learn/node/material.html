@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{ bootstrap.load_css() }}
-    <title>引智——全新在线自适应学习系统</title>
+    <title>引知——全新在线自适应学习系统</title>
 
     <meta name="author" content="QwQ">
     <link rel="stylesheet" type="text/css" href="/static/style/code.css"> 
@@ -20,7 +20,7 @@
             <div class="col-md-12">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/index">引智</a>
+                        <a class="nav-link active" href="/index">引知</a>
                     </li>
                     <li class="nav-item">
                             <a class="nav-link" href="/learn/dashboard">控制台</a>
@@ -75,7 +75,7 @@
                                     当前领域进度: <b>{{ user_domain.mastered_node_count }} / {{ domain.node_count }}</b>
                                 </p>
                                 <div>
-                                    <a href="">
+                                    <a href="/learn/node/material/{{ 3 - material.id }}">
                                         <button type="button" class="btn btn-primary">换个材料</button>
                                     </a>
                                     <a href="/learn/node/test/{{node.id}}">

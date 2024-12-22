@@ -101,8 +101,8 @@ def db_init():
 	user_nodes[20].mastered = True
 
 	materials = [
-		Material(id=1, node_id=1, contributor_id=0),
-		Material(id=2, node_id=1, contributor_id=0),
+		Material(id=1, node_id=1, contributor_id=10086, description="变量入门, 工程命名规范详解", length=1546),
+		Material(id=2, node_id=1, contributor_id=10086, description="变量的一个简单入门", length=230),
 	]
 
 	tests = [

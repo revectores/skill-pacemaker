@@ -8,7 +8,7 @@ from flask import render_template, redirect, flash, url_for, request, session, m
 from flask_login import login_required, current_user, login_user, logout_user
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm,EditorForm,MaterialForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, EditorForm, MaterialForm
 from app.models import User, Domain, Material, Record, Node
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend
 

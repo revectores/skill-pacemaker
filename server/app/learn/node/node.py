@@ -10,7 +10,7 @@ from flask import render_template, redirect, flash, url_for, request, session, m
 from flask_login import login_required, current_user, login_user, logout_user
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, EditorForm, MaterialForm
 from app.models import User, Domain, Material, Record, Section, SectionLink, Node, NodeLink, Material, Test, UserDomain, UserNode, UserMaterial, UserTest
 from app.utils import new_verify_code, send_email, is_valid_email, test_recommend, get_nodes_coordinates
 
@@ -89,7 +89,7 @@ def node_material(material_id):
 	user_domain = UserDomain.query.get_or_404(section.domain_id)
 
 	material_html_file = open(app.root_path + f"/static/material/{material_id}.html")
-	return render_template('learn/node/material.html', material_html=material_html_file.read(),
+	return render_template('learn/node/material.html', material=material, material_html=material_html_file.read(),
 						   domain=domain, section=section, node=node, user_domain=user_domain)
 
 
@@ -142,6 +142,19 @@ def get_materials(node_id):
 
 	return jsonify(materials)
 
+
+
+@node.route('/new_material')
+def new_material():
+	material_form = MaterialForm()
+	return render_template('learn/node/new_material.html', uid='Edwin Sha', form=material_form)
+
+
+
+@node.route('/new_test')
+def new_test():
+	material_form = MaterialForm()
+	return render_template('learn/node/new_test.html', uid='Edwin Sha', form=material_form)
 
 
 
